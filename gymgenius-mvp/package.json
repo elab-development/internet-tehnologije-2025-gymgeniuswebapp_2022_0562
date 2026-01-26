@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "tsx src/scripts/seed.ts"
+    "seed": "tsx src/scripts/seed.ts",
+    "migrate:lastlogin": "tsx src/scripts/migration-add-lastlogin.ts",
+    "migrate:secondary-muscles": "tsx src/scripts/migration-exercise-secondary-muscles.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
