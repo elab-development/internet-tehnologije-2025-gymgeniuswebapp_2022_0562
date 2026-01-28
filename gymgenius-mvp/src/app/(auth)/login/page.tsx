@@ -22,9 +22,6 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState('');
 
-  /**
-   * Validacija forme
-   */
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
@@ -42,23 +39,16 @@ export default function LoginPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  /**
-   * Handle input change
-   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    
-    // Očisti error za to polje
+
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
     setApiError('');
   };
 
-  /**
-   * Handle form submit
-   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setApiError('');
@@ -133,7 +123,7 @@ export default function LoginPage() {
               variant="primary"
               size="lg"
               fullWidth
-              isLoading={isLoading}
+              isLoading={isLoading || authLoading}
             >
               Sign In
             </Button>

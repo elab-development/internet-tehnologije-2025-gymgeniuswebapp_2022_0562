@@ -1,31 +1,28 @@
-import { NextRequest } from 'next/server';
-import { adminAuth, adminDb } from '@/lib/firebase-admin';
-import { successResponse, errorResponse } from '@/utils/api-response';
+import { NextRequest, NextResponse } from 'next/server';
+import { adminDb } from '@/lib/firebase-admin';
 import { isValidEmail } from '@/utils/validation';
-import { generateToken } from '@/utils/jwt';
+import { generateToken } from '@/utils/jwt'; // <-- samo iz jwt.ts
 import { verifyCredentials } from '@/utils/auth-helpers';
-
 
 export async function POST(request: NextRequest) {
   try {
-    // 1. Parse request body
     const body = await request.json();
     const { email, password } = body;
 
-    // 2. Validacija
     if (!email || !password) {
-      return errorResponse('Email and password are required', 400);
+      return NextResponse.json(
+        { success: false, error: 'Email and password are required' },
+        { status: 400 }
+      );
     }
 
     if (!isValidEmail(email)) {
-      return errorResponse('Invalid email format', 400);
+      return NextResponse.json(
+        { success: false, error: 'Invalid email format' },
+        { status: 400 }
+      );
     }
 
-    // 3. Firebase nema built-in password verification na server-side
-    // Moramo koristiti Firebase Client SDK ili custom implementaciju
-    // Za MVP, koristimo workaround sa Firebase Admin
-    
-    // Prvo pronađi korisnika po email-u
     const userSnapshot = await adminDb
       .collection('users')
       .where('email', '==', email)
@@ -33,48 +30,69 @@ export async function POST(request: NextRequest) {
       .get();
 
     if (userSnapshot.empty) {
-      return errorResponse('Invalid credentials', 401);
+      return NextResponse.json(
+        { success: false, error: 'Invalid credentials' },
+        { status: 401 }
+      );
     }
 
     const userDoc = userSnapshot.docs[0];
     const userData = userDoc.data();
 
-    // 4. Verifikuj da korisnik postoji u Firebase Auth
     const verification = await verifyCredentials(email, password);
 
     if (!verification.success) {
-        return errorResponse(verification.error || 'Invalid credentials', 401);
+      return NextResponse.json(
+        { success: false, error: verification.error || 'Invalid credentials' },
+        { status: 401 }
+      );
     }
 
-    // NAPOMENA: U produkciji bi koristili Firebase Client SDK
-    // za verifikaciju lozinke ili implementirali bcrypt hash
-    // Za MVP, pretpostavljamo da je lozinka validna ako korisnik postoji
-
-    // 5. Generiši JWT token
-    const token = generateToken({
+    const token = await generateToken({
       userId: userData.userId,
       email: userData.email,
       role: userData.role,
     });
 
-    // 6. Ažuriraj lastLogin timestamp
     await adminDb.collection('users').doc(userData.userId).update({
       lastLogin: new Date(),
     });
 
-    // 7. Vrati odgovor
-    return successResponse({
-      token,
-      user: {
-        userId: userData.userId,
-        email: userData.email,
-        role: userData.role,
-        displayName: userData.displayName,
-      },
-    }, 'Login successful');
+    const userPayload = {
+      userId: userData.userId,
+      email: userData.email,
+      role: userData.role,
+      displayName: userData.displayName,
+    };
 
+    console.log('✅ Login generated token for user:', userPayload);
+
+    const res = NextResponse.json(
+      {
+        success: true,
+        message: 'Login successful',
+        data: {
+          token,
+          user: userPayload,
+        },
+      },
+      { status: 200 }
+    );
+
+    res.cookies.set('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    return res;
   } catch (error) {
-    console.error('Login error:', error);
-    return errorResponse('Login failed', 500);
+    console.error('❌ Login error:', error);
+    return NextResponse.json(
+      { success: false, error: 'Login failed' },
+      { status: 500 }
+    );
   }
 }

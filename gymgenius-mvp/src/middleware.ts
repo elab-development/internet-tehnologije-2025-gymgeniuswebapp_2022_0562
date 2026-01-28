@@ -1,18 +1,14 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifyToken, extractTokenFromHeader } from '@/utils/jwt';
+import { verifyToken } from '@/utils/jwt'; // <-- samo iz jwt.ts
 import { UserRole } from '@/types/models';
 
-// Rute koje zahtevaju autentifikaciju
 const protectedRoutes = ['/dashboard', '/api/workouts', '/api/challenges'];
-
-// Rute koje zahtevaju admin pristup
 const adminRoutes = ['/api/exercises', '/api/admin'];
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Proveri da li je ruta zaštićena
   const isProtected = protectedRoutes.some((route) => pathname.startsWith(route));
   const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route));
 
@@ -20,28 +16,28 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Izvuci token
-  const authHeader = request.headers.get('authorization');
-  const token = extractTokenFromHeader(authHeader);
+  const token = request.cookies.get('token')?.value;
 
   if (!token) {
+    console.log('⚠ Middleware: No token provided for', pathname);
     return NextResponse.json(
       { success: false, error: 'Unauthorized - No token provided' },
       { status: 401 }
     );
   }
 
-  // Verifikuj token
-  const payload = verifyToken(token);
+  const payload = await verifyToken(token);
 
   if (!payload) {
+    console.log('⚠ Middleware: Invalid or expired token for', pathname);
     return NextResponse.json(
-      { success: false, error: 'Unauthorized - Invalid token' },
+      { success: false, error: 'Unauthorized - Invalid or expired token' },
       { status: 401 }
     );
   }
 
-  // Proveri admin pristup
+  console.log('✅ Middleware: Token valid for user:', payload.email);
+
   if (isAdminRoute && payload.role !== UserRole.ADMIN) {
     return NextResponse.json(
       { success: false, error: 'Forbidden - Admin access required' },
@@ -49,7 +45,6 @@ export function middleware(request: NextRequest) {
     );
   }
 
-  // Dodaj user info u request headers (za korišćenje u API rutama)
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-user-id', payload.userId);
   requestHeaders.set('x-user-role', payload.role);
@@ -61,7 +56,6 @@ export function middleware(request: NextRequest) {
   });
 }
 
-// Konfiguracija - koje rute middleware prati
 export const config = {
   matcher: ['/dashboard/:path*', '/api/:path*'],
 };

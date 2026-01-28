@@ -11,12 +11,6 @@ interface AuthState {
   isAuthenticated: boolean;
 }
 
-/**
- * Custom hook za upravljanje autentifikacijom
- * 
- * @example
- * const { user, login, logout, isLoading } = useAuth();
- */
 export function useAuth() {
   const router = useRouter();
   const [authState, setAuthState] = useState<AuthState>({
@@ -26,7 +20,6 @@ export function useAuth() {
     isAuthenticated: false,
   });
 
-  // Učitaj korisnika iz localStorage pri mount-u
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
@@ -49,9 +42,6 @@ export function useAuth() {
     }
   }, []);
 
-  /**
-   * Login funkcija
-   */
   const login = async (email: string, password: string) => {
     try {
       const response = await fetch('/api/auth/login', {
@@ -66,11 +56,9 @@ export function useAuth() {
         throw new Error(data.error || 'Login failed');
       }
 
-      // Sačuvaj u localStorage
       localStorage.setItem('token', data.data.token);
       localStorage.setItem('user', JSON.stringify(data.data.user));
 
-      // Ažuriraj state
       setAuthState({
         user: data.data.user,
         token: data.data.token,
@@ -84,9 +72,6 @@ export function useAuth() {
     }
   };
 
-  /**
-   * Register funkcija
-   */
   const register = async (email: string, password: string, displayName?: string) => {
     try {
       const response = await fetch('/api/auth/register', {
@@ -101,11 +86,9 @@ export function useAuth() {
         throw new Error(data.error || 'Registration failed');
       }
 
-      // Sačuvaj u localStorage
       localStorage.setItem('token', data.data.token);
       localStorage.setItem('user', JSON.stringify(data.data.user));
 
-      // Ažuriraj state
       setAuthState({
         user: data.data.user,
         token: data.data.token,
@@ -119,25 +102,14 @@ export function useAuth() {
     }
   };
 
-  /**
-   * Logout funkcija
-   */
   const logout = async () => {
     try {
-      const token = localStorage.getItem('token');
-
-      if (token) {
-        await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-      }
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
     } catch (error) {
       console.error('Logout API call failed:', error);
     } finally {
-      // Uvek očisti localStorage i state
       localStorage.removeItem('token');
       localStorage.removeItem('user');
 

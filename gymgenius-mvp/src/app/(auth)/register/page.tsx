@@ -11,7 +11,7 @@ import { isValidEmail, isStrongPassword } from '@/utils/validation';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { register } = useAuth();
+  const { register, isLoading: authLoading } = useAuth();
 
   const [formData, setFormData] = useState({
     displayName: '',
@@ -24,34 +24,28 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState('');
 
-  /**
-   * Validacija forme
-   */
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    // Display name
     if (!formData.displayName.trim()) {
       newErrors.displayName = 'Name is required';
     } else if (formData.displayName.trim().length < 2) {
       newErrors.displayName = 'Name must be at least 2 characters';
     }
 
-    // Email
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!isValidEmail(formData.email)) {
       newErrors.email = 'Invalid email format';
     }
 
-    // Password
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (!isStrongPassword(formData.password)) {
-      newErrors.password = 'Password must be at least 8 characters with uppercase, lowercase, number and special character';
+      newErrors.password =
+        'Password must be at least 8 characters with uppercase, lowercase, number and special character';
     }
 
-    // Confirm password
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = 'Please confirm your password';
     } else if (formData.password !== formData.confirmPassword) {
@@ -62,23 +56,16 @@ export default function RegisterPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  /**
-   * Handle input change
-   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    
-    // Očisti error za to polje
+
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
     setApiError('');
   };
 
-  /**
-   * Handle form submit
-   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setApiError('');
@@ -116,14 +103,12 @@ export default function RegisterPage() {
         {/* Form Card */}
         <div className="bg-white rounded-lg shadow-xl p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* API Error */}
             {apiError && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
                 {apiError}
               </div>
             )}
 
-            {/* Display Name Input */}
             <Input
               label="Full Name"
               type="text"
@@ -137,7 +122,6 @@ export default function RegisterPage() {
               autoComplete="name"
             />
 
-            {/* Email Input */}
             <Input
               label="Email"
               type="email"
@@ -151,7 +135,6 @@ export default function RegisterPage() {
               autoComplete="email"
             />
 
-            {/* Password Input */}
             <Input
               label="Password"
               type="password"
@@ -166,7 +149,6 @@ export default function RegisterPage() {
               helperText="Min. 8 characters with uppercase, lowercase, number & special char"
             />
 
-            {/* Confirm Password Input */}
             <Input
               label="Confirm Password"
               type="password"
@@ -180,19 +162,17 @@ export default function RegisterPage() {
               autoComplete="new-password"
             />
 
-            {/* Submit Button */}
             <Button
               type="submit"
               variant="primary"
               size="lg"
               fullWidth
-              isLoading={isLoading}
+              isLoading={isLoading || authLoading}
             >
               Create Account
             </Button>
           </form>
 
-          {/* Footer Links */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{' '}
@@ -206,11 +186,15 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Terms */}
         <p className="text-center text-xs text-gray-500 mt-6">
           By creating an account, you agree to our{' '}
-          <a href="#" className="underline">Terms of Service</a> and{' '}
-          <a href="#" className="underline">Privacy Policy</a>
+          <a href="#" className="underline">
+            Terms of Service
+          </a>{' '}
+          and{' '}
+          <a href="#" className="underline">
+            Privacy Policy
+          </a>
         </p>
       </div>
     </div>

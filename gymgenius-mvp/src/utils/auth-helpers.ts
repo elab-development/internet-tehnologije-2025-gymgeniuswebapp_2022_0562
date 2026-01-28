@@ -1,25 +1,26 @@
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+// src/utils/auth-helpers.ts
+
+import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
+import app from '@/lib/firebase';
+
+const auth = getAuth(app);
 
 /**
- * Verifikuje korisničke kredencijale koristeći Firebase Client SDK
- * NAPOMENA: Ova funkcija se izvršava na serveru, ali koristi client SDK
+ * Verifikuje email i password preko Firebase Auth (client SDK)
  */
 export async function verifyCredentials(
   email: string,
   password: string
-): Promise<{ success: boolean; uid?: string; error?: string }> {
+): Promise<{ success: boolean; error?: string }> {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return {
-      success: true,
-      uid: userCredential.user.uid,
-    };
+    await signInWithEmailAndPassword(auth, email, password);
+    return { success: true };
   } catch (error: any) {
-    console.error('Credential verification failed:', error.code);
+    console.error('verifyCredentials error:', error);
     
+    // Firebase auth error codes
     if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-      return { success: false, error: 'Invalid credentials' };
+      return { success: false, error: 'Invalid email or password' };
     }
     
     return { success: false, error: 'Authentication failed' };
