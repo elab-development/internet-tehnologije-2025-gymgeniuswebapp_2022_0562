@@ -19,6 +19,7 @@ Fitness aplikacija sa AI-powered personalizovanim workout planovima.
 - **Database**: Firestore
 - **Auth**: Firebase Authentication
 - **AI**: Ollama (Llama 3.2) - Local AI
+- **Exercise DB**: Wger REST API - 1000+ exercises
 - **Testing**: Jest + React Testing Library
 - **DevOps**: Docker, Docker Compose, GitHub Actions
 
@@ -59,6 +60,10 @@ JWT_SECRET=your_super_secret_jwt_key_min_32_chars
 # Ollama (Local AI)
 OLLAMA_BASE_URL=http://localhost:11434
 OLLAMA_MODEL=llama3.2
+
+# Wger API (Exercise Database)
+WGER_API_BASE_URL=https://wger.de/api/v2
+WGER_API_LANGUAGE=2
 ```
 
 ### 3. Pokreni razvojni server
@@ -129,6 +134,30 @@ ollama pull codellama
 # OLLAMA_MODEL=llama3.1
 ```
 
+## 🏋 Wger API Integration
+
+### O Wger-u
+
+Wger je **open-source** fitnes aplikacija sa obimnom bazom vežbi.
+
+**Prednosti:**
+- ✅ **Potpuno besplatno**
+- ✅ **Bez API key-a** (javni pristup)
+- ✅ **1000+ vežbi** sa detaljnim opisima
+- ✅ **Kategorije, mišići, oprema**
+- ✅ **Multilingual** (engleski, nemački...)
+
+### API Endpoints
+
+- `GET /api/wger/search?query=bench` - Pretraga vežbi
+- `GET /api/wger/exercises/{id}` - Detalji vežbe
+- `POST /api/wger/sync` - Sync u Firestore (Admin)
+
+### Dokumentacija
+
+- **Wger API Docs:** https://wger.de/en/software/api
+- **Wger GitHub:** https://github.com/wger-project/wger
+
 ## 📝 Development
 
 ### Pokretanje testova
@@ -191,7 +220,7 @@ OLLAMA_BASE_URL=http://host.docker.internal:11434
 GET /api/health
 ```
 
-### AI Workout Generation
+### AI Workout Generation (Ollama)
 ```
 POST /api/ai/generate-workout
 Authorization: Bearer <token>
@@ -210,6 +239,30 @@ Body:
 ### Ollama Status
 ```
 GET /api/ai/generate-workout
+```
+
+### Wger Exercise Search
+```
+GET /api/wger/search?query=bench&limit=20
+Authorization: Bearer <token>
+```
+
+### Wger Exercise Details
+```
+GET /api/wger/exercises/{id}
+Authorization: Bearer <token>
+```
+
+### Wger Sync (Admin)
+```
+POST /api/wger/sync
+Authorization: Bearer <token>
+Content-Type: application/json
+
+Body:
+{
+  "limit": 100
+}
 ```
 
 ## 📁 Project Structure
