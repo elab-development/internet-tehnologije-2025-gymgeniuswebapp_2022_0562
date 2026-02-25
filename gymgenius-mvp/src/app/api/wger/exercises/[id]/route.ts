@@ -25,16 +25,17 @@ import { successResponse, errorResponse, notFoundResponse, unauthorizedResponse 
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const userId = request.headers.get('x-user-id');
 
     if (!userId) {
       return unauthorizedResponse();
     }
 
-    const exerciseId = parseInt(params.id);
+    const exerciseId = parseInt(id);
 
     if (isNaN(exerciseId)) {
       return errorResponse('Invalid exercise ID', 400);

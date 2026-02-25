@@ -83,10 +83,11 @@ import { successResponse, errorResponse, notFoundResponse } from '@/utils/api-re
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const exerciseDoc = await adminDb.collection('exercises').doc(params.id).get();
+    const { id } = await params;
+    const exerciseDoc = await adminDb.collection('exercises').doc(id).get();
 
     if (!exerciseDoc.exists) {
       return notFoundResponse('Exercise not found');
@@ -108,9 +109,10 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Proveri admin pristup
     const userRole = request.headers.get('x-user-role');
 
@@ -121,7 +123,7 @@ export async function PUT(
     const body = await request.json();
 
     // Proveri da li vežba postoji
-    const exerciseRef = adminDb.collection('exercises').doc(params.id);
+    const exerciseRef = adminDb.collection('exercises').doc(id);
     const exerciseDoc = await exerciseRef.get();
 
     if (!exerciseDoc.exists) {
@@ -162,9 +164,10 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Proveri admin pristup
     const userRole = request.headers.get('x-user-role');
 
@@ -172,7 +175,7 @@ export async function DELETE(
       return errorResponse('Forbidden - Admin access required', 403);
     }
 
-    const exerciseRef = adminDb.collection('exercises').doc(params.id);
+    const exerciseRef = adminDb.collection('exercises').doc(id);
     const exerciseDoc = await exerciseRef.get();
 
     if (!exerciseDoc.exists) {
