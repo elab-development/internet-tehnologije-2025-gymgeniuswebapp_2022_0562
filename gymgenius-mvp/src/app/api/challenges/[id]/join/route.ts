@@ -7,6 +7,7 @@ import {
   unauthorizedResponse,
 } from '@/utils/api-response';
 import { ChallengeParticipant } from '@/types/models';
+import { sendChallengeUpdate } from '@/lib/notifications';
 
 /**
  * @swagger
@@ -81,6 +82,14 @@ export async function POST(
     await challengeDoc.ref.update({
       participantCount: (challengeData?.participantCount || 0) + 1,
     });
+
+    // Send welcome notification
+    await sendChallengeUpdate(
+      userId,
+      challengeData?.name || 'Challenge',
+      'Welcome! You have joined the challenge. Good luck!',
+      id
+    );
 
     return successResponse(
       {

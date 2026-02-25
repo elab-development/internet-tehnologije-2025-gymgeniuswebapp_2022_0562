@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
 import { successResponse, errorResponse } from '@/utils/api-response';
 import { WorkoutPlan } from '@/types/models';
+import { sendWorkoutReminder } from '@/lib/notifications';
 
 /**
  * @swagger
@@ -120,6 +121,9 @@ export async function POST(request: NextRequest) {
     };
 
     const docRef = await adminDb.collection('workoutPlans').add(newPlan);
+
+    // Send notification
+    await sendWorkoutReminder(userId, newPlan.name);
 
     return successResponse(
       {

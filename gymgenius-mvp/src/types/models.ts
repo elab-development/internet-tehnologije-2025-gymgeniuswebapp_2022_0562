@@ -78,6 +78,14 @@ export enum LogStatus {
   SKIPPED = 'skipped'
 }
 
+export enum NotificationType {
+  WORKOUT_REMINDER = 'workout_reminder',
+  MEAL_REMINDER = 'meal_reminder',
+  CHALLENGE_UPDATE = 'challenge_update',
+  ACHIEVEMENT = 'achievement',
+  SYSTEM = 'system'
+}
+
 // ==========================================
 // MODEL 1: USER
 // ==========================================
@@ -257,4 +265,51 @@ export interface ApiResponse<T> {
   data?: T;
   error?: string;
   message?: string;
+}
+
+// ==========================================
+// MODEL 7: NOTIFICATION
+// ==========================================
+
+export interface Notification {
+  notificationId: string;
+  userId: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  isRead: boolean;
+
+  // Optional metadata
+  relatedId?: string; // ID of related entity (workout, challenge, etc.)
+  relatedType?: 'workout' | 'challenge' | 'meal' | 'achievement';
+  actionUrl?: string;
+
+  createdAt: Date;
+}
+
+// ==========================================
+// MODEL 8: USER PREFERENCES
+// ==========================================
+
+export interface UserPreferences {
+  userId: string;
+
+  // Notification settings
+  notifications: {
+    workoutReminders: boolean;
+    mealReminders: boolean;
+    challengeUpdates: boolean;
+    achievements: boolean;
+    email: boolean;
+    push: boolean;
+  };
+
+  // Reminder times
+  reminderTimes: {
+    morning: string; // HH:MM format
+    afternoon: string;
+    evening: string;
+  };
+
+  updatedAt: Date;
 }
