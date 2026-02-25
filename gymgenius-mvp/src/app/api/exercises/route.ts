@@ -4,8 +4,104 @@ import { successResponse, errorResponse } from '@/utils/api-response';
 import { Exercise, MuscleGroup, Equipment, Difficulty } from '@/types/models';
 
 /**
- * GET /api/exercises
- * Vraća listu svih aktivnih vežbi sa opcionalnim filterima
+ * @swagger
+ * /api/exercises:
+ *   get:
+ *     summary: Get all exercises
+ *     tags: [Exercises]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: muscleGroup
+ *         schema:
+ *           type: string
+ *           enum: [chest, back, shoulders, biceps, triceps, legs, core, cardio]
+ *         description: Filter by muscle group
+ *       - in: query
+ *         name: equipment
+ *         schema:
+ *           type: string
+ *           enum: [barbell, dumbbell, machine, bodyweight, resistance_band, kettlebell, cable]
+ *         description: Filter by equipment
+ *       - in: query
+ *         name: difficulty
+ *         schema:
+ *           type: string
+ *           enum: [beginner, intermediate, advanced]
+ *         description: Filter by difficulty
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search by name or description
+ *     responses:
+ *       200:
+ *         description: List of exercises
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     exercises:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Exercise'
+ *                     total:
+ *                       type: number
+ *                       example: 10
+ *   post:
+ *     summary: Create new exercise (Admin only)
+ *     tags: [Exercises]
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - primaryMuscleGroup
+ *               - equipment
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Bench Press
+ *               description:
+ *                 type: string
+ *                 example: Compound chest exercise
+ *               primaryMuscleGroup:
+ *                 type: string
+ *                 example: chest
+ *               secondaryMuscleGroups:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: [triceps, shoulders]
+ *               equipment:
+ *                 type: string
+ *                 example: barbell
+ *               difficulty:
+ *                 type: string
+ *                 example: intermediate
+ *               instructions:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["Step 1", "Step 2"]
+ *     responses:
+ *       201:
+ *         description: Exercise created
+ *       403:
+ *         description: Forbidden - Admin access required
  */
 export async function GET(request: NextRequest) {
   try {

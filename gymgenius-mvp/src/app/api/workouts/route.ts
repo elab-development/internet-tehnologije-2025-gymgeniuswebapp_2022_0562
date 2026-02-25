@@ -4,8 +4,62 @@ import { successResponse, errorResponse } from '@/utils/api-response';
 import { WorkoutPlan } from '@/types/models';
 
 /**
- * GET /api/workouts
- * Vraća workout planove korisnika
+ * @swagger
+ * /api/workouts:
+ *   get:
+ *     summary: Get user's workout plans
+ *     tags: [Workouts]
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: List of workout plans
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     plans:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/WorkoutPlan'
+ *                     total:
+ *                       type: number
+ *   post:
+ *     summary: Create new workout plan
+ *     tags: [Workouts]
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - goal
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Push Day
+ *               goal:
+ *                 type: string
+ *                 example: muscle_gain
+ *               difficulty:
+ *                 type: string
+ *                 example: intermediate
+ *               durationWeeks:
+ *                 type: number
+ *                 example: 8
+ *     responses:
+ *       201:
+ *         description: Workout plan created
  */
 export async function GET(request: NextRequest) {
   try {

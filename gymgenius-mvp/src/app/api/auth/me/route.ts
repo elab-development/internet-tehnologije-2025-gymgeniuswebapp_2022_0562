@@ -2,6 +2,34 @@ import { NextRequest } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
 import { successResponse, unauthorizedResponse } from '@/utils/api-response';
 
+/**
+ * @swagger
+ * /api/auth/me:
+ *   get:
+ *     summary: Get current user profile
+ *     tags: [Auth]
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 export async function GET(request: NextRequest) {
   try {
     // Middleware je već verifikovao token i dodao user info u headers

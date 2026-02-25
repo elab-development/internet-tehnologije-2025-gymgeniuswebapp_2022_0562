@@ -1,5 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     summary: User logout
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Logout successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ */
 export async function POST(_request: NextRequest) {
   try {
     const res = NextResponse.json(

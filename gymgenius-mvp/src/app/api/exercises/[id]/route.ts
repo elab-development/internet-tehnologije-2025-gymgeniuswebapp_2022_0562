@@ -3,8 +3,83 @@ import { adminDb } from '@/lib/firebase-admin';
 import { successResponse, errorResponse, notFoundResponse } from '@/utils/api-response';
 
 /**
- * GET /api/exercises/[id]
- * Vraća detalje jedne vežbe
+ * @swagger
+ * /api/exercises/{id}:
+ *   get:
+ *     summary: Get exercise by ID
+ *     tags: [Exercises]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Exercise ID
+ *     responses:
+ *       200:
+ *         description: Exercise details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Exercise'
+ *       404:
+ *         description: Exercise not found
+ *   put:
+ *     summary: Update exercise (Admin only)
+ *     tags: [Exercises]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               difficulty:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Exercise updated
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Exercise not found
+ *   delete:
+ *     summary: Delete exercise (Admin only)
+ *     tags: [Exercises]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Exercise deleted
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Exercise not found
  */
 export async function GET(
   request: NextRequest,
