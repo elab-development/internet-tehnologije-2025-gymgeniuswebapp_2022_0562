@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Standalone output za Docker
+  output: 'standalone',
+
+  // Opciono: optimizacije
+  reactStrictMode: true,
+  swcMinify: true,
 };
 
 export default nextConfig;
