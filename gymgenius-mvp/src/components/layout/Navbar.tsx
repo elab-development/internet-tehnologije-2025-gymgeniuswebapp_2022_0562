@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { Home, Dumbbell, Trophy, User, LogOut, Cpu, TrendingUp } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { useAuth } from '@/hooks/useAuth';
+import NotificationBell from './NotificationBell';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -56,6 +57,9 @@ export default function Navbar() {
           {/* User Menu */}
           {isAuthenticated && user ? (
             <div className="flex items-center gap-3">
+              {/* Notification Bell */}
+              <NotificationBell />
+
               <div className="hidden sm:block text-right">
                 <p className="text-sm font-medium text-gray-900">
                   {user.displayName || 'User'}
