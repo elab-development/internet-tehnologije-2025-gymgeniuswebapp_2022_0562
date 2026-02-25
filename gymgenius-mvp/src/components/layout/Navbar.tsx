@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Dumbbell, Trophy, User, LogOut } from 'lucide-react';
+import { Home, Dumbbell, Trophy, User, LogOut, Cpu } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -13,6 +13,7 @@ export default function Navbar() {
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard', icon: Home },
     { href: '/exercises', label: 'Exercises', icon: Dumbbell },
+    { href: '/ai-workout', label: 'AI Workout', icon: Cpu },
     { href: '/challenges', label: 'Challenges', icon: Trophy },
   ];
 
