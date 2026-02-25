@@ -1,0 +1,31 @@
+# Dependencies
+node_modules
+
+# Testing
+coverage
+test-results
+.nyc_output
+
+# Environment files
+.env.local
+.env.development.local
+.env.test.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Documentation (optional - uključi ako ne želiš da deploy-uješ docs)
+# README.md
+# SECURITY.md
+# TESTING.md
