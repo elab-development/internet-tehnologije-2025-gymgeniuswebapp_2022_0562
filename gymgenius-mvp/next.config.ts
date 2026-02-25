@@ -6,7 +6,6 @@ const nextConfig: NextConfig = {
 
   // Opciono: optimizacije
   reactStrictMode: true,
-  swcMinify: true,
 };
 
 export default nextConfig;
