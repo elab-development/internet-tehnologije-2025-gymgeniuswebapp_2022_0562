@@ -23,6 +23,16 @@ Fitness aplikacija sa AI-powered personalizovanim workout planovima.
 - **Testing**: Jest + React Testing Library
 - **DevOps**: Docker, Docker Compose, GitHub Actions
 
+## 📚 API Documentation
+
+**Interaktivna Swagger API Dokumentacija** dostupna je na:
+- **Development**: [http://localhost:3000/docs](http://localhost:3000/docs)
+- **Production**: [https://gymgenius-mvp.vercel.app/docs](https://gymgenius-mvp.vercel.app/docs)
+
+Swagger UI omogućava direktno testiranje svih endpoint-a bez potrebe za Postman ili sličnim alatima.
+
+OpenAPI specifikacija dostupna na `/api-docs` endpoint-u.
+
 ## 📦 Prerequisites
 
 - Node.js 20+
