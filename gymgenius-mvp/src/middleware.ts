@@ -4,8 +4,9 @@ import { verifyToken } from '@/utils/jwt';
 import { UserRole } from '@/types/models';
 import { generateCsrfToken, validateCsrfToken, isStateChangingMethod } from '@/lib/csrf';
 
-const protectedRoutes = ['/dashboard', '/api/workouts', '/api/challenges', '/api/meals', '/api/stats'];
+const protectedRoutes = ['/dashboard', '/api/workouts', '/api/challenges', '/api/meals', '/api/stats', '/api/goals', '/api/nutrition', '/api/users', '/api/progress', '/api/premium', '/profile', '/premium'];
 const adminRoutes = ['/api/exercises', '/api/admin'];
+const premiumRoutes = ['/api/premium'];
 
 // CORS: Whitelist dozvoljenih origin-a
 const allowedOrigins = [
@@ -31,6 +32,7 @@ export async function middleware(request: NextRequest) {
 
   const isProtected = protectedRoutes.some((route) => pathname.startsWith(route));
   const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route));
+  const isPremiumRoute = premiumRoutes.some((route) => pathname.startsWith(route));
 
   if (!isProtected && !isAdminRoute) {
     // Public route - dodaj security headers
@@ -76,6 +78,17 @@ export async function middleware(request: NextRequest) {
   }
 
   // ==========================================
+  // 3b. AUTHORIZATION (Premium routes)
+  // ==========================================
+  if (isPremiumRoute && payload.role !== UserRole.PREMIUM && payload.role !== UserRole.ADMIN) {
+    console.log('⚠ Middleware: Non-premium tried to access:', pathname);
+    return NextResponse.json(
+      { success: false, error: 'Premium subscription required', code: 'PREMIUM_REQUIRED' },
+      { status: 403 }
+    );
+  }
+
+  // ==========================================
   // 4. CSRF PROTECTION (state-changing methods)
   // ==========================================
   if (isStateChangingMethod(request.method)) {
@@ -90,7 +103,7 @@ export async function middleware(request: NextRequest) {
       );
     }
 
-    const isValidCsrf = validateCsrfToken(csrfTokenFromHeader, csrfTokenFromCookie);
+    const isValidCsrf = await validateCsrfToken(csrfTokenFromHeader, csrfTokenFromCookie);
 
     if (!isValidCsrf) {
       console.log('⚠ CSRF: Invalid CSRF token for', request.method, pathname);

@@ -14,7 +14,8 @@
     "seed": "tsx src/scripts/seed.ts",
     "seed:complete": "tsx src/scripts/seed-complete.ts",
     "migrate:lastlogin": "tsx src/scripts/migration-add-lastlogin.ts",
-    "migrate:secondary-muscles": "tsx src/scripts/migration-exercise-secondary-muscles.ts"
+    "migrate:secondary-muscles": "tsx src/scripts/migration-exercise-secondary-muscles.ts",
+    "migrate:remove-deprecated": "tsx src/scripts/migration-remove-deprecated-fields.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

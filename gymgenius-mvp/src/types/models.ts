@@ -86,6 +86,33 @@ export enum NotificationType {
   SYSTEM = 'system'
 }
 
+export enum MealType {
+  BREAKFAST = 'breakfast',
+  LUNCH = 'lunch',
+  DINNER = 'dinner',
+  SNACK = 'snack'
+}
+
+export enum GoalType {
+  WEIGHT = 'weight',
+  STRENGTH = 'strength',
+  CONSISTENCY = 'consistency',
+  NUTRITION = 'nutrition'
+}
+
+export enum GoalStatus {
+  ACTIVE = 'active',
+  COMPLETED = 'completed',
+  EXPIRED = 'expired'
+}
+
+export enum PhotoCategory {
+  FRONT = 'front',
+  BACK = 'back',
+  SIDE = 'side',
+  OTHER = 'other'
+}
+
 // ==========================================
 // MODEL 1: USER
 // ==========================================
@@ -265,6 +292,59 @@ export interface ApiResponse<T> {
   data?: T;
   error?: string;
   message?: string;
+}
+
+// ==========================================
+// MODEL 6: MEAL
+// ==========================================
+
+export interface Meal {
+  mealId: string;
+  userId: string;
+  name: string;
+  type: MealType;
+  calories: number;
+  protein: number;       // g
+  carbs: number;         // g
+  fat: number;           // g
+  quantity?: number;     // grams ili porcije
+  notes?: string;
+  date: string;          // ISO date string (YYYY-MM-DD) - koji dan je obrok logovan
+  createdAt: Date;
+}
+
+// ==========================================
+// MODEL 9: GOAL
+// ==========================================
+
+export interface Goal {
+  goalId: string;
+  userId: string;
+  type: GoalType;
+  title: string;
+  description?: string;
+  targetValue: number;
+  currentValue: number;
+  unit: string;          // 'kg', 'workouts', 'kcal', 'reps'
+  deadline: Date;
+  status: GoalStatus;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// ==========================================
+// MODEL 10: PROGRESS PHOTO
+// ==========================================
+
+export interface ProgressPhoto {
+  photoId: string;
+  userId: string;
+  url: string;            // Firebase Storage public URL
+  storagePath: string;    // Firebase Storage path (for deletion)
+  category: PhotoCategory;
+  notes?: string;
+  date: string;           // YYYY-MM-DD
+  createdAt: Date;
 }
 
 // ==========================================

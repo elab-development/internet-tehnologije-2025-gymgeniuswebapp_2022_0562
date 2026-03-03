@@ -1,44 +1,39 @@
 /**
  * CSRF Token Generation and Validation
  * Implements double-submit cookie pattern
+ * Uses Web Crypto API for Edge Runtime compatibility
  */
 
 const CSRF_SECRET = process.env.CSRF_SECRET || 'default-csrf-secret-change-in-production';
 
-// Lazy load crypto to avoid Edge Runtime issues
-function getCrypto() {
-  // @ts-ignore
-  return require('crypto');
-}
-
 /**
- * Generiše CSRF token
+ * Generiše CSRF token koristeći Web Crypto API (Edge Runtime kompatibilno)
  */
 export function generateCsrfToken(): string {
-  const { randomBytes } = getCrypto();
-  const token = randomBytes(32).toString('hex');
-  return token;
+  const array = new Uint8Array(32);
+  globalThis.crypto.getRandomValues(array);
+  return Array.from(array, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 /**
- * Kreira hash od tokena za validaciju
+ * Kreira hash od tokena za validaciju koristeći Web Crypto API
  */
-export function hashCsrfToken(token: string): string {
-  const { createHash } = getCrypto();
-  return createHash('sha256')
-    .update(`${token}${CSRF_SECRET}`)
-    .digest('hex');
+export async function hashCsrfToken(token: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(`${token}${CSRF_SECRET}`);
+  const hashBuffer = await globalThis.crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer), (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 /**
  * Validira CSRF token
  */
-export function validateCsrfToken(token: string, hashedToken: string): boolean {
+export async function validateCsrfToken(token: string, hashedToken: string): Promise<boolean> {
   if (!token || !hashedToken) {
     return false;
   }
 
-  const expectedHash = hashCsrfToken(token);
+  const expectedHash = await hashCsrfToken(token);
   return expectedHash === hashedToken;
 }
 

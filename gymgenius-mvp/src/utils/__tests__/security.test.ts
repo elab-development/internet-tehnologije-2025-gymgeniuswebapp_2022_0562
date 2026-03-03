@@ -78,9 +78,9 @@ describe('Security - CSRF Protection', () => {
     const { generateCsrfToken, hashCsrfToken, validateCsrfToken } = await import('@/lib/csrf');
 
     const token = generateCsrfToken();
-    const hash = hashCsrfToken(token);
+    const hash = await hashCsrfToken(token);
 
-    expect(validateCsrfToken(token, hash)).toBe(true);
-    expect(validateCsrfToken('wrong-token', hash)).toBe(false);
+    expect(await validateCsrfToken(token, hash)).toBe(true);
+    expect(await validateCsrfToken('wrong-token', hash)).toBe(false);
   });
 });

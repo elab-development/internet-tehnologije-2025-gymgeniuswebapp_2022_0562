@@ -18,48 +18,48 @@ describe('CSRF Protection Tests', () => {
   });
 
   describe('hashCsrfToken', () => {
-    it('should generate consistent hash for same token', () => {
+    it('should generate consistent hash for same token', async () => {
       const token = 'test-token-123';
-      const hash1 = hashCsrfToken(token);
-      const hash2 = hashCsrfToken(token);
+      const hash1 = await hashCsrfToken(token);
+      const hash2 = await hashCsrfToken(token);
 
       expect(hash1).toBe(hash2);
     });
 
-    it('should generate different hashes for different tokens', () => {
-      const hash1 = hashCsrfToken('token1');
-      const hash2 = hashCsrfToken('token2');
+    it('should generate different hashes for different tokens', async () => {
+      const hash1 = await hashCsrfToken('token1');
+      const hash2 = await hashCsrfToken('token2');
 
       expect(hash1).not.toBe(hash2);
     });
   });
 
   describe('validateCsrfToken', () => {
-    it('should validate correct token-hash pair', () => {
+    it('should validate correct token-hash pair', async () => {
       const token = generateCsrfToken();
-      const hash = hashCsrfToken(token);
+      const hash = await hashCsrfToken(token);
 
-      expect(validateCsrfToken(token, hash)).toBe(true);
+      expect(await validateCsrfToken(token, hash)).toBe(true);
     });
 
-    it('should reject incorrect token', () => {
+    it('should reject incorrect token', async () => {
       const token = generateCsrfToken();
-      const hash = hashCsrfToken(token);
+      const hash = await hashCsrfToken(token);
       const wrongToken = generateCsrfToken();
 
-      expect(validateCsrfToken(wrongToken, hash)).toBe(false);
+      expect(await validateCsrfToken(wrongToken, hash)).toBe(false);
     });
 
-    it('should reject empty token', () => {
-      const hash = hashCsrfToken('some-token');
+    it('should reject empty token', async () => {
+      const hash = await hashCsrfToken('some-token');
 
-      expect(validateCsrfToken('', hash)).toBe(false);
+      expect(await validateCsrfToken('', hash)).toBe(false);
     });
 
-    it('should reject empty hash', () => {
+    it('should reject empty hash', async () => {
       const token = generateCsrfToken();
 
-      expect(validateCsrfToken(token, '')).toBe(false);
+      expect(await validateCsrfToken(token, '')).toBe(false);
     });
   });
 

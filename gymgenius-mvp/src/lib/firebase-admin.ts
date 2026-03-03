@@ -21,8 +21,10 @@ if (!admin.apps.length) {
       clientEmail,
       privateKey,
     }),
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   });
 }
 
 export const adminDb = admin.firestore();
 export const adminAuth = admin.auth();
+export const adminStorage = admin.storage();

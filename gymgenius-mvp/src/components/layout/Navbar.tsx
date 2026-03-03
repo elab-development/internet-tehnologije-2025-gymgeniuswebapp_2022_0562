@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Dumbbell, Trophy, User, LogOut, Cpu, TrendingUp } from 'lucide-react';
+import { Home, Dumbbell, Trophy, User, LogOut, Cpu, TrendingUp, Utensils, Crown } from 'lucide-react';
+import { UserRole } from '@/types/models';
 import Button from '@/components/ui/Button';
 import { useAuth } from '@/hooks/useAuth';
 import NotificationBell from './NotificationBell';
@@ -15,6 +16,7 @@ export default function Navbar() {
     { href: '/dashboard', label: 'Dashboard', icon: Home },
     { href: '/exercises', label: 'Exercises', icon: Dumbbell },
     { href: '/ai-workout', label: 'AI Workout', icon: Cpu },
+    { href: '/nutrition', label: 'Nutrition', icon: Utensils },
     { href: '/progress', label: 'Progress', icon: TrendingUp },
     { href: '/challenges', label: 'Challenges', icon: Trophy },
   ];
@@ -60,12 +62,25 @@ export default function Navbar() {
               {/* Notification Bell */}
               <NotificationBell />
 
-              <div className="hidden sm:block text-right">
+              {/* Premium link */}
+              <Link
+                href="/premium"
+                className={`hidden sm:flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-colors ${
+                  user.role === UserRole.PREMIUM || user.role === UserRole.ADMIN
+                    ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                }`}
+              >
+                <Crown size={12} />
+                {user.role === UserRole.PREMIUM || user.role === UserRole.ADMIN ? 'Premium' : 'Upgrade'}
+              </Link>
+
+              <Link href="/profile" className="hidden sm:block text-right hover:opacity-75 transition-opacity">
                 <p className="text-sm font-medium text-gray-900">
                   {user.displayName || 'User'}
                 </p>
                 <p className="text-xs text-gray-500">{user.role}</p>
-              </div>
+              </Link>
 
               <Button
                 variant="ghost"
