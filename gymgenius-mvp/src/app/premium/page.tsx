@@ -6,6 +6,7 @@ import Navbar from '@/components/layout/Navbar';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { useAuth } from '@/hooks/useAuth';
+import { apiFetch } from '@/utils/api-client';
 import { Crown, Zap, Camera, Brain, Lock, CheckCircle } from 'lucide-react';
 import { UserRole } from '@/types/models';
 import toast from 'react-hot-toast';
@@ -66,13 +67,9 @@ export default function PremiumPage() {
     }
     setIsGenerating(true);
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/premium/ai-weekly-plan', {
+      const response = await apiFetch('/api/premium/ai-weekly-plan', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        
         body: JSON.stringify({ durationWeeks: 4, includeNutrition: true }),
       });
       const data = await response.json();

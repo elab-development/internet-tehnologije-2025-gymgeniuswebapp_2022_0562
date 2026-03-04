@@ -8,6 +8,7 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { TrendingUp, Calendar, Target, Plus, Trash2, Clock, Camera, Upload, X } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { apiFetch } from '@/utils/api-client';
 import WeightProgressChart from '@/components/charts/WeightProgressChart';
 import WorkoutVolumeChart from '@/components/charts/WorkoutVolumeChart';
 import CalorieIntakeChart from '@/components/charts/CalorieIntakeChart';
@@ -76,10 +77,8 @@ export default function ProgressPage() {
   const fetchStats = useCallback(async () => {
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(`/api/stats/progress?period=${period}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+              });
       const data = await response.json();
       if (data.success) setStats(data.data);
     } catch (error) {
@@ -92,10 +91,8 @@ export default function ProgressPage() {
   const fetchGoals = useCallback(async () => {
     setGoalsLoading(true);
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch('/api/goals?status=active', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+              });
       const data = await response.json();
       if (data.success) setGoals(data.data.goals);
     } catch (error) {
@@ -108,10 +105,8 @@ export default function ProgressPage() {
   const fetchPhotos = useCallback(async () => {
     setPhotosLoading(true);
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch('/api/progress/photos', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+              });
       const data = await response.json();
       if (data.success) setPhotos(data.data.photos);
     } catch (error) {
@@ -137,10 +132,8 @@ export default function ProgressPage() {
     }
     setSubmittingGoal(true);
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/goals', {
+      const response = await apiFetch('/api/goals', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           type: goalForm.type,
           title: goalForm.title,
@@ -170,11 +163,9 @@ export default function ProgressPage() {
   const handleDeleteGoal = async (goalId: string) => {
     if (!confirm('Da li ste sigurni da želite da obrišete ovaj cilj?')) return;
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/goals/${goalId}`, {
+      const response = await apiFetch(`/api/goals/${goalId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+              });
       const data = await response.json();
       if (data.success) {
         toast.success('Cilj obrisan');
@@ -191,17 +182,15 @@ export default function ProgressPage() {
 
     setUploadingPhoto(true);
     try {
-      const token = localStorage.getItem('token');
       const formData = new FormData();
       formData.append('photo', file);
       formData.append('category', photoCategory);
       if (photoNotes.trim()) formData.append('notes', photoNotes.trim());
       formData.append('date', new Date().toISOString().split('T')[0]);
 
-      const response = await fetch('/api/progress/photos', {
+      const response = await apiFetch('/api/progress/photos', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
+                body: formData,
       });
       const data = await response.json();
       if (data.success) {
@@ -222,11 +211,9 @@ export default function ProgressPage() {
   const handleDeletePhoto = async (photoId: string) => {
     if (!confirm('Da li ste sigurni da želite da obrišete ovu fotografiju?')) return;
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/progress/photos/${photoId}`, {
+      const response = await apiFetch(`/api/progress/photos/${photoId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+              });
       const data = await response.json();
       if (data.success) {
         toast.success('Fotografija obrisana');

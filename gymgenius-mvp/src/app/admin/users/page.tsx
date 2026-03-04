@@ -8,6 +8,7 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { Search, Edit, Trash2, Shield, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { apiFetch } from '@/utils/api-client';
 
 export default function AdminUsersPage() {
   const router = useRouter();
@@ -21,14 +22,12 @@ export default function AdminUsersPage() {
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('token');
       const params = new URLSearchParams();
       if (roleFilter) params.append('role', roleFilter);
       if (searchQuery) params.append('search', searchQuery);
 
-      const response = await fetch(`/api/admin/users?${params.toString()}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await apiFetch(`/api/admin/users?${params.toString()}`, {
+              });
 
       const data = await response.json();
       if (data.success) {
@@ -45,11 +44,9 @@ export default function AdminUsersPage() {
     if (!confirm('Are you sure you want to delete this user?')) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/admin/users/${userId}`, {
+      const response = await apiFetch(`/api/admin/users/${userId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+              });
 
       const data = await response.json();
       if (data.success) {
@@ -64,13 +61,9 @@ export default function AdminUsersPage() {
 
   const handleUpdateRole = async (userId: string, newRole: string) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/admin/users/${userId}`, {
+      const response = await apiFetch(`/api/admin/users/${userId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        
         body: JSON.stringify({ role: newRole }),
       });
 

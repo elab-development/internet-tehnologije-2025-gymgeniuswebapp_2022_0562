@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Bell, Check, X } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { apiFetch } from '@/utils/api-client';
 
 export default function NotificationBell() {
   const { isAuthenticated } = useAuth();
@@ -14,11 +15,7 @@ export default function NotificationBell() {
     if (!isAuthenticated) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/notifications?limit=10', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      const response = await fetch('/api/notifications?limit=10');
       const data = await response.json();
       if (data.success) {
         setNotifications(data.data.notifications);
@@ -31,12 +28,7 @@ export default function NotificationBell() {
 
   const markAsRead = async (notificationId: string) => {
     try {
-      const token = localStorage.getItem('token');
-      await fetch(`/api/notifications/${notificationId}/read`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      await apiFetch(`/api/notifications/${notificationId}/read`, { method: 'POST' });
       fetchNotifications();
     } catch (error) {
       console.error('Mark as read error:', error);
@@ -45,12 +37,7 @@ export default function NotificationBell() {
 
   const markAllAsRead = async () => {
     try {
-      const token = localStorage.getItem('token');
-      await fetch('/api/notifications/read-all', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      await apiFetch('/api/notifications/read-all', { method: 'POST' });
       fetchNotifications();
     } catch (error) {
       console.error('Mark all as read error:', error);

@@ -7,6 +7,7 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { Trophy, Medal, ArrowLeft, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { apiFetch } from '@/utils/api-client';
 
 export default function ChallengeDetailPage() {
   const router = useRouter();
@@ -20,10 +21,8 @@ export default function ChallengeDetailPage() {
   const fetchChallengeDetails = async () => {
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/challenges/${params.id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await apiFetch(`/api/challenges/${params.id}`, {
+              });
 
       const data = await response.json();
       if (data.success) {
@@ -39,13 +38,9 @@ export default function ChallengeDetailPage() {
 
   const handleUpdateProgress = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/challenges/${params.id}/progress`, {
+      const response = await apiFetch(`/api/challenges/${params.id}/progress`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        
         body: JSON.stringify({ progressIncrement: 1 }),
       });
 

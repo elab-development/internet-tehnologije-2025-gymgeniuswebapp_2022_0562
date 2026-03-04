@@ -26,15 +26,14 @@ export async function hashCsrfToken(token: string): Promise<string> {
 }
 
 /**
- * Validira CSRF token
+ * Validira CSRF token (double-submit cookie pattern)
+ * Poredi vrednost iz headera sa vrednoscu iz cookie-ja
  */
-export async function validateCsrfToken(token: string, hashedToken: string): Promise<boolean> {
-  if (!token || !hashedToken) {
+export async function validateCsrfToken(token: string, cookieToken: string): Promise<boolean> {
+  if (!token || !cookieToken) {
     return false;
   }
-
-  const expectedHash = await hashCsrfToken(token);
-  return expectedHash === hashedToken;
+  return token === cookieToken;
 }
 
 /**

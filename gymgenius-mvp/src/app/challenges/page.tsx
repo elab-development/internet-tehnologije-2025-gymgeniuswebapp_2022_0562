@@ -7,6 +7,7 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { Trophy, Users, Calendar, Target, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { apiFetch } from '@/utils/api-client';
 
 export default function ChallengesPage() {
   const router = useRouter();
@@ -19,12 +20,10 @@ export default function ChallengesPage() {
   const fetchChallenges = async () => {
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('token');
       const statusParam = filter === 'all' ? '' : `?status=${filter}`;
 
-      const response = await fetch(`/api/challenges${statusParam}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await apiFetch(`/api/challenges${statusParam}`, {
+              });
 
       const data = await response.json();
       if (data.success) {
@@ -39,11 +38,9 @@ export default function ChallengesPage() {
 
   const handleJoinChallenge = async (challengeId: string) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/challenges/${challengeId}/join`, {
+      const response = await apiFetch(`/api/challenges/${challengeId}/join`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+              });
 
       const data = await response.json();
       if (data.success) {

@@ -160,7 +160,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <Button variant="primary" fullWidth>
+            <Button variant="primary" fullWidth onClick={() => router.push('/exercises')}>
               Start Workout
             </Button>
           </Card>
@@ -210,7 +210,7 @@ export default function DashboardPage() {
                 Based on your progress, we recommend focusing on progressive overload
                 for compound movements this week.
               </p>
-              <Button variant="outline" className="bg-white text-primary-700 border-white hover:bg-primary-50">
+              <Button variant="outline" className="bg-white text-primary-700 border-white hover:bg-primary-50" onClick={() => router.push('/ai-workout')}>
                 Generate New Plan
               </Button>
             </div>

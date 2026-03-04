@@ -7,6 +7,7 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { useAuth } from '@/hooks/useAuth';
+import { apiFetch } from '@/utils/api-client';
 import { Dumbbell, Plus, Pencil, Trash2, X, ChevronLeft } from 'lucide-react';
 import { MuscleGroup, Equipment, Difficulty } from '@/types/models';
 import toast from 'react-hot-toast';
@@ -48,11 +49,9 @@ export default function AdminExercisesPage() {
   const fetchExercises = useCallback(async () => {
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('token');
       const url = search ? `/api/exercises?search=${encodeURIComponent(search)}` : '/api/exercises';
       const response = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+              });
       const data = await response.json();
       if (data.success) setExercises(data.data.exercises);
     } catch (error) {
@@ -95,16 +94,14 @@ export default function AdminExercisesPage() {
     }
     setIsSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
       const instructions = form.instructions.filter((i) => i.trim() !== '');
       const payload = { ...form, instructions };
 
       const url = editingId ? `/api/exercises/${editingId}` : '/api/exercises';
       const method = editingId ? 'PUT' : 'POST';
 
-      const response = await fetch(url, {
+      const response = await apiFetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload),
       });
       const data = await response.json();
@@ -127,11 +124,9 @@ export default function AdminExercisesPage() {
   const handleDelete = async (exerciseId: string, name: string) => {
     if (!confirm(`Da li ste sigurni da želite da obrišete vežbu "${name}"?`)) return;
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/exercises/${exerciseId}`, {
+      const response = await apiFetch(`/api/exercises/${exerciseId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+              });
       const data = await response.json();
       if (data.success) {
         toast.success('Vežba obrisana');

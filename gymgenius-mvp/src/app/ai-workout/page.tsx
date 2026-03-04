@@ -8,6 +8,7 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { Sparkles, Dumbbell, Cpu } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { apiFetch } from '@/utils/api-client';
 
 export default function AIWorkoutPage() {
   const router = useRouter();
@@ -49,14 +50,8 @@ export default function AIWorkoutPage() {
     setError('');
 
     try {
-      const token = localStorage.getItem('token');
-
-      const response = await fetch('/api/ai/generate-workout', {
+      const response = await apiFetch('/api/ai/generate-workout', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({
           ...formData,
           saveToProfile: true,

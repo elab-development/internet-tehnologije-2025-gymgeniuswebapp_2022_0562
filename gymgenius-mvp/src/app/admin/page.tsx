@@ -7,6 +7,7 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { Users, Dumbbell, Trophy, TrendingUp, Activity, Shield } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { apiFetch } from '@/utils/api-client';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -18,10 +19,8 @@ export default function AdminDashboardPage() {
   const fetchStats = async () => {
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch('/api/admin/stats', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+              });
 
       const data = await response.json();
       if (data.success) {

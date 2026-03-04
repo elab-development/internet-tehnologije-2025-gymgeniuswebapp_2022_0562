@@ -8,6 +8,7 @@ import Card from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { useAuth } from '@/hooks/useAuth';
+import { apiFetch } from '@/utils/api-client';
 import { Exercise, MuscleGroup, Equipment, Difficulty } from '@/types/models';
 
 export default function ExercisesPage() {
@@ -42,7 +43,6 @@ export default function ExercisesPage() {
   const fetchExercises = async () => {
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('token');
       
       // Build query params
       const params = new URLSearchParams();
@@ -51,11 +51,7 @@ export default function ExercisesPage() {
       if (filters.difficulty) params.append('difficulty', filters.difficulty);
       if (searchTerm) params.append('search', searchTerm);
 
-      const response = await fetch(`/api/exercises?${params.toString()}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(`/api/exercises?${params.toString()}`);
 
       const data = await response.json();
 
@@ -74,12 +70,10 @@ export default function ExercisesPage() {
 
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(
         `/api/wger/search?query=${encodeURIComponent(searchTerm)}`,
         {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+                  }
       );
 
       const data = await response.json();
@@ -336,13 +330,9 @@ export default function ExercisesPage() {
                 onClick={async () => {
                   if (!confirm('Sync 100 exercises from Wger?')) return;
 
-                  const token = localStorage.getItem('token');
-                  const response = await fetch('/api/wger/sync', {
+                  const response = await apiFetch('/api/wger/sync', {
                     method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      Authorization: `Bearer ${token}`,
-                    },
+                    
                     body: JSON.stringify({ limit: 100 }),
                   });
 

@@ -7,6 +7,7 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { useAuth } from '@/hooks/useAuth';
+import { apiFetch } from '@/utils/api-client';
 import { Utensils, Plus, Search, Trash2, X, Calculator, ChevronDown, ChevronUp } from 'lucide-react';
 import { MealType } from '@/types/models';
 import toast from 'react-hot-toast';
@@ -95,10 +96,8 @@ export default function NutritionPage() {
   const fetchMeals = useCallback(async () => {
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(`/api/meals?date=${selectedDate}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+              });
       const data = await response.json();
       if (data.success) {
         setMeals(data.data.meals);
@@ -120,10 +119,8 @@ export default function NutritionPage() {
     setIsSearching(true);
     setSearchResults([]);
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(`/api/nutrition/search?q=${encodeURIComponent(searchQuery)}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+              });
       const data = await response.json();
       if (data.success) {
         setSearchResults(data.data.foods);
@@ -159,13 +156,9 @@ export default function NutritionPage() {
     }
     setIsSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/meals', {
+      const response = await apiFetch('/api/meals', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        
         body: JSON.stringify({
           name: form.name,
           type: form.type,
@@ -197,11 +190,9 @@ export default function NutritionPage() {
   const handleDelete = async (mealId: string) => {
     if (!confirm('Da li ste sigurni da želite da obrišete ovaj obrok?')) return;
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/meals/${mealId}`, {
+      const response = await apiFetch(`/api/meals/${mealId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+              });
       const data = await response.json();
       if (data.success) {
         toast.success('Obrok obrisan');
@@ -217,10 +208,8 @@ export default function NutritionPage() {
   const handleCalculate = async () => {
     setCalcLoading(true);
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch('/api/nutrition/calculator', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+              });
       const data = await response.json();
       if (data.success) {
         setCalcResult(data.data);

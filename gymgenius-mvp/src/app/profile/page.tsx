@@ -7,6 +7,7 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { useAuth } from '@/hooks/useAuth';
+import { apiFetch } from '@/utils/api-client';
 import { User, Save } from 'lucide-react';
 import { Gender, FitnessGoal, ActivityLevel, Equipment } from '@/types/models';
 import toast from 'react-hot-toast';
@@ -59,10 +60,8 @@ export default function ProfilePage() {
     if (!isAuthenticated) return;
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem('token');
         const response = await fetch('/api/users/profile', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+                  });
         const data = await response.json();
         if (data.success) {
           const p = data.data;
@@ -99,7 +98,6 @@ export default function ProfilePage() {
     e.preventDefault();
     setIsSaving(true);
     try {
-      const token = localStorage.getItem('token');
       const payload: Record<string, unknown> = {};
 
       if (form.displayName) payload.displayName = form.displayName;
@@ -111,9 +109,8 @@ export default function ProfilePage() {
       if (form.activityLevel) payload.activityLevel = form.activityLevel;
       payload.availableEquipment = form.availableEquipment;
 
-      const response = await fetch('/api/users/profile', {
+      const response = await apiFetch('/api/users/profile', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload),
       });
       const data = await response.json();
