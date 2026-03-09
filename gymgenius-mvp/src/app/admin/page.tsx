@@ -45,7 +45,7 @@ export default function AdminDashboardPage() {
   }, [isAuthenticated, user]);
 
   if (authLoading || isLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center">Učitavanje...</div>;
   }
 
   if (!isAuthenticated || user?.role !== 'admin') {
@@ -61,9 +61,9 @@ export default function AdminDashboardPage() {
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-2">
             <Shield className="text-red-600" size={32} />
-            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Admin kontrolna tabla</h1>
           </div>
-          <p className="text-gray-600">Manage users, content, and system settings</p>
+          <p className="text-gray-600">Upravljajte korisnicima, sadržajem i sistemskim postavkama</p>
         </div>
 
         {/* Quick Stats */}
@@ -72,7 +72,7 @@ export default function AdminDashboardPage() {
             <Card className="border-l-4 border-blue-500">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Total Users</p>
+                  <p className="text-sm text-gray-600 mb-1">Ukupno korisnika</p>
                   <p className="text-3xl font-bold text-gray-900">
                     {stats.overview.totalUsers}
                   </p>
@@ -86,7 +86,7 @@ export default function AdminDashboardPage() {
             <Card className="border-l-4 border-green-500">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Total Exercises</p>
+                  <p className="text-sm text-gray-600 mb-1">Ukupno vežbi</p>
                   <p className="text-3xl font-bold text-gray-900">
                     {stats.overview.totalExercises}
                   </p>
@@ -100,7 +100,7 @@ export default function AdminDashboardPage() {
             <Card className="border-l-4 border-yellow-500">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Active Challenges</p>
+                  <p className="text-sm text-gray-600 mb-1">Aktivni izazovi</p>
                   <p className="text-3xl font-bold text-gray-900">
                     {stats.activeChallenges}
                   </p>
@@ -114,7 +114,7 @@ export default function AdminDashboardPage() {
             <Card className="border-l-4 border-purple-500">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Workouts (7d)</p>
+                  <p className="text-sm text-gray-600 mb-1">Treninzi (7d)</p>
                   <p className="text-3xl font-bold text-gray-900">
                     {stats.recentActivity.workoutsLast7Days}
                   </p>
@@ -130,7 +130,7 @@ export default function AdminDashboardPage() {
         {/* Users by Role */}
         {stats && (
           <Card className="mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Users by Role</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Korisnici po ulozi</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {Object.entries(stats.usersByRole).map(([role, count]: any) => (
                 <div key={role} className="text-center p-4 bg-gray-50 rounded-lg">
@@ -148,10 +148,10 @@ export default function AdminDashboardPage() {
             <div className="text-center py-6">
               <Users className="mx-auto mb-4 text-blue-600" size={48} />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Manage Users
+                Upravljanje korisnicima
               </h3>
               <p className="text-sm text-gray-600">
-                View, edit, and manage user accounts
+                Pregledajte, uređujte i upravljajte nalozima korisnika
               </p>
             </div>
           </Card>
@@ -160,10 +160,10 @@ export default function AdminDashboardPage() {
             <div className="text-center py-6">
               <Dumbbell className="mx-auto mb-4 text-green-600" size={48} />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Manage Exercises
+                Upravljanje vežbama
               </h3>
               <p className="text-sm text-gray-600">
-                Add, edit, and delete exercises
+                Dodajte, uređujte i brišite vežbe
               </p>
             </div>
           </Card>
@@ -172,10 +172,10 @@ export default function AdminDashboardPage() {
             <div className="text-center py-6">
               <TrendingUp className="mx-auto mb-4 text-purple-600" size={48} />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Content Moderation
+                Moderacija sadržaja
               </h3>
               <p className="text-sm text-gray-600">
-                Review and moderate user content
+                Pregledajte i moderujte korisnički sadržaj
               </p>
             </div>
           </Card>

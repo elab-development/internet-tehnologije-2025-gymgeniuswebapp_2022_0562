@@ -1,10 +1,13 @@
 /**
- * Ollama API Client (Llama 3.2)
- * Lokalno AI rešenje za generisanje workout planova
+ * AI Client - podrzava Ollama (lokalno/Docker) i Groq Cloud (Vercel/produkcija)
+ * Kontrolisano preko AI_PROVIDER env varijable: 'ollama' | 'groq'
  */
 
+const AI_PROVIDER = process.env.AI_PROVIDER || 'ollama';
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama3.2';
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
 
 interface OllamaGenerateRequest {
   model: string;
@@ -32,7 +35,100 @@ interface OllamaGenerateResponse {
 }
 
 /**
- * Generiše workout plan korišćenjem Ollama (Llama 3.2)
+ * Interna funkcija - poziva AI provider i vraca raw string odgovor
+ */
+async function callAI(prompt: string): Promise<{ text: string; model: string; metadata?: Record<string, unknown> }> {
+  if (AI_PROVIDER === 'groq') {
+    if (!GROQ_API_KEY) {
+      throw new Error('GROQ_API_KEY nije konfigurisan. Posetite console.groq.com za besplatan API kljuc.');
+    }
+
+    console.log(`🤖 Calling Groq API (${GROQ_MODEL})...`);
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 2000,
+      }),
+    });
+
+    if (!response.ok) {
+      const err = await response.text();
+      throw new Error(`Groq API error: ${response.status} - ${err}`);
+    }
+
+    const data = await response.json();
+    const text = data.choices?.[0]?.message?.content;
+
+    if (!text) {
+      throw new Error('Empty response from Groq');
+    }
+
+    console.log('✅ Groq response received');
+
+    return {
+      text,
+      model: GROQ_MODEL,
+      metadata: {
+        usage: data.usage,
+      },
+    };
+  }
+
+  // Ollama (lokalno / Docker)
+  console.log('🤖 Calling Ollama API with Llama 3.2...');
+
+  const requestBody: OllamaGenerateRequest = {
+    model: OLLAMA_MODEL,
+    prompt,
+    stream: false,
+    options: {
+      temperature: 0.7,
+      top_p: 0.9,
+      num_predict: 2000,
+    },
+  };
+
+  const response = await fetch(`${OLLAMA_BASE_URL}/api/generate`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestBody),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
+  }
+
+  const data: OllamaGenerateResponse = await response.json();
+
+  if (!data.response) {
+    throw new Error('Empty response from Ollama');
+  }
+
+  console.log('✅ Ollama response received');
+  console.log('📝 Raw response length:', data.response.length);
+
+  return {
+    text: data.response,
+    model: data.model,
+    metadata: {
+      totalDuration: data.total_duration,
+      evalCount: data.eval_count,
+    },
+  };
+}
+
+/**
+ * Generiše workout plan korišćenjem AI (Ollama lokalno ili Groq cloud)
  */
 export async function generateWorkoutPlan(params: {
   goal: string;
@@ -55,7 +151,7 @@ export async function generateWorkoutPlan(params: {
     fitnessLevel,
   } = params;
 
-  // Kreiraj strukturiran prompt za Llama 3.2
+  // Kreiraj strukturiran prompt
   const prompt = `You are a professional fitness coach. Generate a detailed ${durationWeeks}-week workout plan in JSON format.
 
 USER PROFILE:
@@ -107,55 +203,21 @@ OUTPUT FORMAT (respond with ONLY valid JSON, no additional text):
 Generate the workout plan now:`;
 
   try {
-    console.log('🤖 Calling Ollama API with Llama 3.2...');
-
-    const requestBody: OllamaGenerateRequest = {
-      model: OLLAMA_MODEL,
-      prompt,
-      stream: false,
-      options: {
-        temperature: 0.7,
-        top_p: 0.9,
-        num_predict: 2000, // Max tokens
-      },
-    };
-
-    const response = await fetch(`${OLLAMA_BASE_URL}/api/generate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
-    }
-
-    const data: OllamaGenerateResponse = await response.json();
-
-    if (!data.response) {
-      throw new Error('Empty response from Ollama');
-    }
-
-    console.log('✅ Ollama response received');
-    console.log('📝 Raw response length:', data.response.length);
+    const { text, model, metadata } = await callAI(prompt);
 
     // Parse JSON iz response-a
     let workoutPlan;
     try {
-      // Pokušaj da ekstraktuješ JSON iz response-a
-      const jsonMatch = data.response.match(/\{[\s\S]*\}/);
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         workoutPlan = JSON.parse(jsonMatch[0]);
       } else {
-        // Ako nema JSON-a, kreiraj fallback strukturu
         workoutPlan = createFallbackPlan(params);
         console.warn('⚠ No JSON found in response, using fallback plan');
       }
     } catch (parseError) {
       console.error('❌ JSON parse error:', parseError);
-      console.log('Raw response:', data.response.substring(0, 500));
+      console.log('Raw response:', text.substring(0, 500));
       workoutPlan = createFallbackPlan(params);
     }
 
@@ -163,23 +225,28 @@ Generate the workout plan now:`;
       success: true,
       data: workoutPlan,
       metadata: {
-        model: data.model,
-        totalDuration: data.total_duration,
-        evalCount: data.eval_count,
+        model,
+        provider: AI_PROVIDER,
+        ...metadata,
       },
     };
   } catch (error: any) {
-    console.error('❌ Ollama API Error:', error);
+    console.error('❌ AI API Error:', error);
 
-    // Fallback na mock plan ako Ollama nije dostupan
-    if (error.message.includes('fetch') || error.message.includes('ECONNREFUSED')) {
-      console.warn('⚠ Ollama not available, using fallback plan');
+    // Fallback na mock plan ako AI nije dostupan
+    if (
+      error.message.includes('fetch') ||
+      error.message.includes('ECONNREFUSED') ||
+      error.message.includes('GROQ_API_KEY nije konfigurisan')
+    ) {
+      console.warn('⚠ AI service not available, using fallback plan');
       return {
         success: true,
         data: createFallbackPlan(params),
         metadata: {
           model: 'fallback',
-          note: 'Ollama service not available, using pre-generated plan',
+          provider: 'fallback',
+          note: 'AI service not available, using pre-generated plan',
         },
       };
     }
@@ -203,7 +270,6 @@ function createFallbackPlan(params: {
 }) {
   const { goal, experience, equipment, daysPerWeek, durationWeeks } = params;
 
-  // Osnovni plan baziran na parametrima
   const planName = `${experience.charAt(0).toUpperCase() + experience.slice(1)} ${
     goal.replace('_', ' ').charAt(0).toUpperCase() + goal.replace('_', ' ').slice(1)
   } Plan`;
@@ -255,7 +321,7 @@ function generateWeeklySchedule(
     const exercises = availableExercises
       .filter((ex) => ex.category === split.focus || ex.category === 'compound')
       .slice(0, experience === 'beginner' ? 4 : experience === 'intermediate' ? 5 : 6)
-      .map((ex, index) => ({
+      .map((ex) => ({
         name: ex.name,
         sets: experience === 'beginner' ? 3 : 4,
         reps: ex.reps,
@@ -278,7 +344,6 @@ function generateWeeklySchedule(
  */
 function getExercisesForEquipment(equipment: string[]) {
   const allExercises = [
-    // Compound movements
     {
       name: 'Barbell Squat',
       category: 'compound',
@@ -353,16 +418,20 @@ function getExercisesForEquipment(equipment: string[]) {
     },
   ];
 
-  // Filtriraj vežbe na osnovu dostupne opreme
   return allExercises.filter(
     (ex) => equipment.includes(ex.equipment) || ex.equipment === 'bodyweight'
   );
 }
 
 /**
- * Proveri da li je Ollama servis dostupan
+ * Proveri da li je AI servis dostupan
  */
 export async function checkOllamaHealth(): Promise<boolean> {
+  if (AI_PROVIDER === 'groq') {
+    // Groq je cloud - proveri samo da li je API kljuc setovan
+    return !!GROQ_API_KEY;
+  }
+
   try {
     const response = await fetch(`${OLLAMA_BASE_URL}/api/tags`, {
       method: 'GET',
@@ -375,9 +444,13 @@ export async function checkOllamaHealth(): Promise<boolean> {
 }
 
 /**
- * Lista dostupnih modela u Ollama
+ * Lista dostupnih modela u Ollama (samo za Ollama provider)
  */
 export async function listOllamaModels() {
+  if (AI_PROVIDER === 'groq') {
+    return [{ name: GROQ_MODEL, provider: 'groq' }];
+  }
+
   try {
     const response = await fetch(`${OLLAMA_BASE_URL}/api/tags`);
     const data = await response.json();

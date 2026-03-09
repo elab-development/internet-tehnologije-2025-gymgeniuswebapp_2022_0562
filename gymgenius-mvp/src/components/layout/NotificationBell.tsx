@@ -81,13 +81,13 @@ export default function NotificationBell() {
           <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-20 max-h-96 overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="font-semibold text-gray-900">Notifications</h3>
+              <h3 className="font-semibold text-gray-900">Obaveštenja</h3>
               {unreadCount > 0 && (
                 <button
                   onClick={markAllAsRead}
                   className="text-xs text-primary-600 hover:text-primary-700"
                 >
-                  Mark all as read
+                  Označi sve kao pročitano
                 </button>
               )}
             </div>
@@ -96,7 +96,7 @@ export default function NotificationBell() {
             {notifications.length === 0 ? (
               <div className="p-8 text-center text-gray-500">
                 <Bell className="mx-auto mb-2 text-gray-400" size={32} />
-                <p>No notifications</p>
+                <p>Nema obaveštenja</p>
               </div>
             ) : (
               <div className="divide-y">

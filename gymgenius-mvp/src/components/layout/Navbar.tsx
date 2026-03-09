@@ -73,7 +73,7 @@ export default function Navbar() {
                 }`}
               >
                 <Crown size={12} />
-                {user.role === UserRole.PREMIUM || user.role === UserRole.ADMIN ? 'Premium' : 'Upgrade'}
+                {user.role === UserRole.PREMIUM || user.role === UserRole.ADMIN ? 'Premium' : 'Nadogradnja'}
               </Link>
 
               <Link href="/profile" className="hidden sm:block text-right hover:opacity-75 transition-opacity">
@@ -89,19 +89,19 @@ export default function Navbar() {
                 onClick={logout}
                 leftIcon={<LogOut size={18} />}
               >
-                Logout
+                Odjava
               </Button>
             </div>
           ) : (
             <div className="flex items-center gap-2">
               <Link href="/login">
                 <Button variant="ghost" size="sm">
-                  Login
+                  Prijava
                 </Button>
               </Link>
               <Link href="/register">
                 <Button variant="primary" size="sm">
-                  Sign Up
+                  Registracija
                 </Button>
               </Link>
             </div>

@@ -14,7 +14,7 @@ import toast from 'react-hot-toast';
 const PREMIUM_FEATURES = [
   {
     icon: Brain,
-    title: '7-Day AI Workout Plan',
+    title: '7-dnevni AI plan treninga',
     description: 'Generišite potpuni sedmodnevni plan treninga personalizovan za vaš profil',
     color: 'text-purple-600',
     bg: 'bg-purple-50',
@@ -46,7 +46,7 @@ const FREE_FEATURES = [
 
 const PREMIUM_PERKS = [
   'Sve Free funkcionalnosti',
-  '7-Day personalizovani AI plan',
+  '7-dnevni personalizovani AI plan',
   'Napredna AI sa profilom optimizacija',
   'Prioritetna podrška',
   'Rani pristup novim funkcijama',
@@ -87,7 +87,7 @@ export default function PremiumPage() {
   };
 
   if (authLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center">Učitavanje...</div>;
   }
 
   if (!isAuthenticated) {
@@ -208,7 +208,7 @@ export default function PremiumPage() {
                   disabled={isGenerating}
                 >
                   <Zap size={16} className="mr-2" />
-                  {isGenerating ? 'Generišem plan...' : 'Generiši 7-Day Plan'}
+                  {isGenerating ? 'Generišem plan...' : 'Generiši 7-dnevni plan'}
                 </Button>
               </div>
             </div>

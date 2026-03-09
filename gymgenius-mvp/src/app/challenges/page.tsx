@@ -60,7 +60,7 @@ export default function ChallengesPage() {
   }, [isAuthenticated, filter]);
 
   if (authLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center">Učitavanje...</div>;
   }
 
   if (!isAuthenticated) {
@@ -77,10 +77,10 @@ export default function ChallengesPage() {
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-2">
             <Trophy className="text-yellow-600" size={32} />
-            <h1 className="text-3xl font-bold text-gray-900">Challenges</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Izazovi</h1>
           </div>
           <p className="text-gray-600">
-            Join challenges, compete with others, and achieve your fitness goals
+            Pridružite se izazovima, takmičite se sa drugima i postignite vaše fitness ciljeve
           </p>
         </div>
 
@@ -90,19 +90,19 @@ export default function ChallengesPage() {
             variant={filter === 'all' ? 'primary' : 'outline'}
             onClick={() => setFilter('all')}
           >
-            All
+            Svi
           </Button>
           <Button
             variant={filter === 'active' ? 'primary' : 'outline'}
             onClick={() => setFilter('active')}
           >
-            Active
+            Aktivni
           </Button>
           <Button
             variant={filter === 'upcoming' ? 'primary' : 'outline'}
             onClick={() => setFilter('upcoming')}
           >
-            Upcoming
+            Nadolazeći
           </Button>
         </div>
 
@@ -117,7 +117,7 @@ export default function ChallengesPage() {
           <Card>
             <div className="text-center py-12">
               <Trophy className="mx-auto text-gray-400 mb-4" size={64} />
-              <p className="text-gray-600">No challenges found</p>
+              <p className="text-gray-600">Nema pronađenih izazova</p>
             </div>
           </Card>
         ) : (
@@ -142,12 +142,12 @@ export default function ChallengesPage() {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm text-gray-700">
                       <Users size={16} />
-                      <span>{challenge.participantCount} participants</span>
+                      <span>{challenge.participantCount} učesnika</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-700">
                       <Target size={16} />
                       <span>
-                        Goal: {challenge.targetValue} {challenge.targetUnit}
+                        Cilj: {challenge.targetValue} {challenge.targetUnit}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-700">
@@ -179,7 +179,7 @@ export default function ChallengesPage() {
                     <div className="bg-primary-50 p-3 rounded-lg">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium text-primary-900">
-                          Your Progress
+                          Vaš napredak
                         </span>
                         <span className="text-sm font-bold text-primary-700">
                           {challenge.userProgress.currentProgress} /{' '}
@@ -212,13 +212,13 @@ export default function ChallengesPage() {
                         handleJoinChallenge(challenge.challengeId);
                       }}
                     >
-                      Join Challenge
+                      Pridruži se izazovu
                     </Button>
                   )}
 
                   {challenge.isParticipating && (
                     <Button variant="outline" fullWidth leftIcon={<TrendingUp size={16} />}>
-                      View Leaderboard
+                      Rang lista
                     </Button>
                   )}
                 </div>

@@ -26,13 +26,13 @@ export default function LoginPage() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'Imejl je obavezan';
     } else if (!isValidEmail(formData.email)) {
-      newErrors.email = 'Invalid email format';
+      newErrors.email = 'Neispravan format imejla';
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = 'Lozinka je obavezna';
     }
 
     setErrors(newErrors);
@@ -64,7 +64,7 @@ export default function LoginPage() {
     if (result.success) {
       router.push('/dashboard');
     } else {
-      setApiError(result.error || 'Login failed');
+      setApiError(result.error || 'Prijava nije uspela');
     }
   };
 
@@ -76,7 +76,7 @@ export default function LoginPage() {
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             💪 GymGenius
           </h1>
-          <p className="text-gray-600">Sign in to your account</p>
+          <p className="text-gray-600">Prijavite se na vaš nalog</p>
         </div>
 
         {/* Form Card */}
@@ -91,10 +91,10 @@ export default function LoginPage() {
 
             {/* Email Input */}
             <Input
-              label="Email"
+              label="Imejl"
               type="email"
               name="email"
-              placeholder="your.email@example.com"
+              placeholder="vas.imejl@example.com"
               value={formData.email}
               onChange={handleChange}
               error={errors.email}
@@ -105,10 +105,10 @@ export default function LoginPage() {
 
             {/* Password Input */}
             <Input
-              label="Password"
+              label="Lozinka"
               type="password"
               name="password"
-              placeholder="Enter your password"
+              placeholder="Unesite vašu lozinku"
               value={formData.password}
               onChange={handleChange}
               error={errors.password}
@@ -125,7 +125,7 @@ export default function LoginPage() {
               fullWidth
               isLoading={isLoading || authLoading}
             >
-              Sign In
+              Prijava
             </Button>
           </form>
 
@@ -136,16 +136,16 @@ export default function LoginPage() {
                 href="/forgot-password"
                 className="text-primary-600 hover:text-primary-700 font-medium"
               >
-                Forgot your password?
+                Zaboravili ste lozinku?
               </Link>
             </p>
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
+              Nemate nalog?{' '}
               <Link
                 href="/register"
                 className="text-primary-600 hover:text-primary-700 font-medium"
               >
-                Sign up
+                Registrujte se
               </Link>
             </p>
           </div>

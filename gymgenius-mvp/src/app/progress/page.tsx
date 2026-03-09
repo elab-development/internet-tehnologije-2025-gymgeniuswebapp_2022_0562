@@ -244,9 +244,9 @@ export default function ProgressPage() {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="text-primary-600" size={32} />
-              <h1 className="text-3xl font-bold text-gray-900">Progress & Statistics</h1>
+              <h1 className="text-3xl font-bold text-gray-900">Progres i statistika</h1>
             </div>
-            <p className="text-gray-600">Track your fitness journey with detailed analytics</p>
+            <p className="text-gray-600">Prati svoj fitnes napredak sa detaljnom analitikom!</p>
           </div>
           <div className="flex gap-2">
             {(['week', 'month', 'year'] as const).map((p) => (
@@ -477,7 +477,7 @@ export default function ProgressPage() {
                 disabled={uploadingPhoto}
               >
                 <Upload size={16} className="mr-1" />
-                {uploadingPhoto ? 'Uploading...' : 'Dodaj foto'}
+                {uploadingPhoto ? 'Otpremanje...' : 'Dodaj foto'}
               </Button>
             </div>
           </div>
@@ -570,7 +570,7 @@ export default function ProgressPage() {
               )}
               {stats.workoutFrequency?.length > 0 && (
                 <Card>
-                  <h3 className="text-lg font-semibold mb-4">Workout Frequency</h3>
+                  <h3 className="text-lg font-semibold mb-4">Frekvencija treninga</h3>
                   <div className="space-y-2">
                     {stats.workoutFrequency.map((week: any, index: number) => (
                       <div key={index} className="flex items-center justify-between">
@@ -579,7 +579,7 @@ export default function ProgressPage() {
                           <div className="w-32 bg-gray-200 rounded-full h-2">
                             <div className="bg-primary-600 h-2 rounded-full" style={{ width: `${(week.count / 7) * 100}%` }} />
                           </div>
-                          <span className="text-sm font-medium">{week.count} workouts</span>
+                          <span className="text-sm font-medium">{week.count} treninga</span>
                         </div>
                       </div>
                     ))}
@@ -592,8 +592,8 @@ export default function ProgressPage() {
           <Card>
             <div className="text-center py-12">
               <Calendar className="mx-auto text-gray-400 mb-4" size={64} />
-              <p className="text-gray-600">No data available for this period</p>
-              <p className="text-sm text-gray-500 mt-2">Start logging workouts and meals to see your progress!</p>
+              <p className="text-gray-600">Nema podataka za ovaj period</p>
+              <p className="text-sm text-gray-500 mt-2">Počnite da beležite treninge i obroke da vidite vaš napredak!</p>
             </div>
           </Card>
         )}

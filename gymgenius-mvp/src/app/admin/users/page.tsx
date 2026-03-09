@@ -85,7 +85,7 @@ export default function AdminUsersPage() {
   }, [isAuthenticated, user, roleFilter]);
 
   if (authLoading || isLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center">Učitavanje...</div>;
   }
 
   if (!isAuthenticated || user?.role !== 'admin') {
@@ -106,21 +106,21 @@ export default function AdminUsersPage() {
             leftIcon={<ArrowLeft size={20} />}
             className="mb-4"
           >
-            Back to Admin Dashboard
+            Nazad na admin kontrolnu tablu
           </Button>
 
           <div className="flex items-center gap-2 mb-2">
             <Shield className="text-blue-600" size={32} />
-            <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Upravljanje korisnicima</h1>
           </div>
-          <p className="text-gray-600">Manage user accounts and permissions</p>
+          <p className="text-gray-600">Upravljajte nalozima i dozvolama korisnika</p>
         </div>
 
         {/* Filters */}
         <Card className="mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              placeholder="Search by email or name..."
+              placeholder="Pretraži po imejlu ili imenu..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && fetchUsers()}
@@ -134,14 +134,14 @@ export default function AdminUsersPage() {
                 onChange={(e) => setRoleFilter(e.target.value)}
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
               >
-                <option value="">All Roles</option>
-                <option value="guest">Guest</option>
-                <option value="user">User</option>
+                <option value="">Sve uloge</option>
+                <option value="guest">Gost</option>
+                <option value="user">Korisnik</option>
                 <option value="premium">Premium</option>
                 <option value="admin">Admin</option>
               </select>
 
-              <Button onClick={fetchUsers}>Search</Button>
+              <Button onClick={fetchUsers}>Pretraži</Button>
             </div>
           </div>
         </Card>
@@ -153,19 +153,19 @@ export default function AdminUsersPage() {
               <thead className="bg-gray-50 border-b">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    User
+                    Korisnik
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Email
+                    Imejl
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Role
+                    Uloga
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Created
+                    Kreiran
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-                    Actions
+                    Akcije
                   </th>
                 </tr>
               </thead>
@@ -203,7 +203,7 @@ export default function AdminUsersPage() {
                         leftIcon={<Trash2 size={16} />}
                         className="text-red-600 hover:text-red-700"
                       >
-                        Delete
+                        Obriši
                       </Button>
                     </td>
                   </tr>
@@ -212,7 +212,7 @@ export default function AdminUsersPage() {
             </table>
 
             {users.length === 0 && (
-              <div className="text-center py-12 text-gray-500">No users found</div>
+              <div className="text-center py-12 text-gray-500">Nema korisnika</div>
             )}
           </div>
         </Card>

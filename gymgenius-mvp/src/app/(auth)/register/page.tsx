@@ -28,28 +28,28 @@ export default function RegisterPage() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.displayName.trim()) {
-      newErrors.displayName = 'Name is required';
+      newErrors.displayName = 'Ime je obavezno';
     } else if (formData.displayName.trim().length < 2) {
-      newErrors.displayName = 'Name must be at least 2 characters';
+      newErrors.displayName = 'Ime mora imati najmanje 2 karaktera';
     }
 
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'Imejl je obavezan';
     } else if (!isValidEmail(formData.email)) {
-      newErrors.email = 'Invalid email format';
+      newErrors.email = 'Neispravan format imejla';
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = 'Lozinka je obavezna';
     } else if (!isStrongPassword(formData.password)) {
       newErrors.password =
-        'Password must be at least 8 characters with uppercase, lowercase, number and special character';
+        'Lozinka mora imati najmanje 8 karaktera sa velikim slovima, malim slovima, brojevima i specijalnim karakterom';
     }
 
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
+      newErrors.confirmPassword = 'Molimo potvrdite lozinku';
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = 'Lozinke se ne podudaraju';
     }
 
     setErrors(newErrors);
@@ -85,7 +85,7 @@ export default function RegisterPage() {
     if (result.success) {
       router.push('/dashboard');
     } else {
-      setApiError(result.error || 'Registration failed');
+      setApiError(result.error || 'Registracija nije uspela');
     }
   };
 
@@ -97,7 +97,7 @@ export default function RegisterPage() {
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             💪 GymGenius
           </h1>
-          <p className="text-gray-600">Create your account</p>
+          <p className="text-gray-600">Kreirajte vaš nalog</p>
         </div>
 
         {/* Form Card */}
@@ -110,10 +110,10 @@ export default function RegisterPage() {
             )}
 
             <Input
-              label="Full Name"
+              label="Ime i prezime"
               type="text"
               name="displayName"
-              placeholder="John Doe"
+              placeholder="Marko Marković"
               value={formData.displayName}
               onChange={handleChange}
               error={errors.displayName}
@@ -123,10 +123,10 @@ export default function RegisterPage() {
             />
 
             <Input
-              label="Email"
+              label="Imejl"
               type="email"
               name="email"
-              placeholder="your.email@example.com"
+              placeholder="vas.imejl@example.com"
               value={formData.email}
               onChange={handleChange}
               error={errors.email}
@@ -136,24 +136,24 @@ export default function RegisterPage() {
             />
 
             <Input
-              label="Password"
+              label="Lozinka"
               type="password"
               name="password"
-              placeholder="Create a strong password"
+              placeholder="Kreirajte jaku lozinku"
               value={formData.password}
               onChange={handleChange}
               error={errors.password}
               leftIcon={<Lock size={20} />}
               fullWidth
               autoComplete="new-password"
-              helperText="Min. 8 characters with uppercase, lowercase, number & special char"
+              helperText="Min. 8 karaktera sa velikim slovima, malim slovima, brojevima i specijalnim znakom"
             />
 
             <Input
-              label="Confirm Password"
+              label="Potvrda lozinke"
               type="password"
               name="confirmPassword"
-              placeholder="Re-enter your password"
+              placeholder="Ponovite vašu lozinku"
               value={formData.confirmPassword}
               onChange={handleChange}
               error={errors.confirmPassword}
@@ -169,31 +169,31 @@ export default function RegisterPage() {
               fullWidth
               isLoading={isLoading || authLoading}
             >
-              Create Account
+              Kreiraj nalog
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Already have an account?{' '}
+              Već imate nalog?{' '}
               <Link
                 href="/login"
                 className="text-primary-600 hover:text-primary-700 font-medium"
               >
-                Sign in
+                Prijavite se
               </Link>
             </p>
           </div>
         </div>
 
         <p className="text-center text-xs text-gray-500 mt-6">
-          By creating an account, you agree to our{' '}
+          Kreiranjem naloga, slažete se sa našim{' '}
           <a href="#" className="underline">
-            Terms of Service
+            Uslovima korišćenja
           </a>{' '}
-          and{' '}
+          i{' '}
           <a href="#" className="underline">
-            Privacy Policy
+            Politikom privatnosti
           </a>
         </p>
       </div>

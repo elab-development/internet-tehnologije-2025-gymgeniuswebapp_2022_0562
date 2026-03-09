@@ -19,11 +19,11 @@ export default function ForgotPasswordPage() {
     setError('');
 
     if (!email) {
-      setError('Email is required');
+      setError('Imejl je obavezan');
       return;
     }
     if (!isValidEmail(email)) {
-      setError('Invalid email format');
+      setError('Neispravan format imejla');
       return;
     }
 
@@ -37,10 +37,10 @@ export default function ForgotPasswordPage() {
       if (data.success) {
         setSent(true);
       } else {
-        setError(data.error || 'Failed to send reset email');
+        setError(data.error || 'Nije moguće poslati email za reset');
       }
     } catch {
-      setError('Network error. Please try again.');
+      setError('Mrežna greška. Molimo pokušajte ponovo.');
     } finally {
       setIsLoading(false);
     }
@@ -52,29 +52,29 @@ export default function ForgotPasswordPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">💪 GymGenius</h1>
-          <p className="text-gray-600">Reset your password</p>
+          <p className="text-gray-600">Resetujte lozinku</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-xl p-8">
           {sent ? (
             <div className="text-center py-4">
               <CheckCircle className="mx-auto text-green-500 mb-4" size={48} />
-              <h2 className="text-xl font-bold text-gray-900 mb-2">Email sent!</h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">Imejl je poslat!</h2>
               <p className="text-gray-600 text-sm mb-6">
-                If an account exists with <strong>{email}</strong>, you will receive a
-                password reset link shortly.
+                Ako postoji nalog sa <strong>{email}</strong>, brzo ćete dobiti
+                link za reset lozinke.
               </p>
               <Link
                 href="/login"
                 className="text-primary-600 hover:text-primary-700 font-medium text-sm"
               >
-                ← Back to Sign In
+                ← Nazad na prijavu
               </Link>
             </div>
           ) : (
             <>
               <p className="text-sm text-gray-600 mb-6">
-                Enter your email address and we will send you a link to reset your password.
+                Unesite vašu imejl adresu i poslacemo vam link za reset lozinke.
               </p>
               <form onSubmit={handleSubmit} className="space-y-5">
                 {error && (
@@ -84,10 +84,10 @@ export default function ForgotPasswordPage() {
                 )}
 
                 <Input
-                  label="Email"
+                  label="Imejl"
                   type="email"
                   name="email"
-                  placeholder="your.email@example.com"
+                  placeholder="vas.imejl@example.com"
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); setError(''); }}
                   error={error && !email ? error : undefined}
@@ -103,7 +103,7 @@ export default function ForgotPasswordPage() {
                   fullWidth
                   isLoading={isLoading}
                 >
-                  Send Reset Link
+                  Pošalji link za reset
                 </Button>
               </form>
 
@@ -112,7 +112,7 @@ export default function ForgotPasswordPage() {
                   href="/login"
                   className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-primary-600"
                 >
-                  <ArrowLeft size={14} /> Back to Sign In
+                  <ArrowLeft size={14} /> Nazad na prijavu
                 </Link>
               </div>
             </>

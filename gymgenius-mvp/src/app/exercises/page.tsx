@@ -116,10 +116,10 @@ export default function ExercisesPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Exercise Library 💪
+            Biblioteka vežbi 💪
           </h1>
           <p className="text-gray-600">
-            Browse local exercises or search Wger's 1000+ exercise database
+            Pregledajte lokalne vežbe ili pretražite Wger-ovu bazu od 1000+ vežbi
           </p>
         </div>
 
@@ -130,14 +130,14 @@ export default function ExercisesPage() {
             onClick={() => setActiveTab('local')}
             leftIcon={<Dumbbell size={20} />}
           >
-            Local ({exercises.length})
+            Lokalne ({exercises.length})
           </Button>
           <Button
             variant={activeTab === 'wger' ? 'primary' : 'outline'}
             onClick={() => setActiveTab('wger')}
             leftIcon={<Database size={20} />}
           >
-            Wger Database (1000+)
+            Wger baza (1000+)
           </Button>
         </div>
 
@@ -146,7 +146,7 @@ export default function ExercisesPage() {
           <form onSubmit={handleSearch} className="mb-4">
             <Input
               type="text"
-              placeholder={activeTab === 'local' ? 'Search local exercises...' : 'Search Wger database...'}
+              placeholder={activeTab === 'local' ? 'Pretraži lokalne vežbe...' : 'Pretraži Wger bazu...'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               leftIcon={<Search size={20} />}
@@ -160,14 +160,14 @@ export default function ExercisesPage() {
             {/* Muscle Group Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Muscle Group
+                Mišićna grupa
               </label>
               <select
                 value={filters.muscleGroup}
                 onChange={(e) => handleFilterChange('muscleGroup', e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               >
-                <option value="">All</option>
+                <option value="">Sve</option>
                 {Object.values(MuscleGroup).map((group) => (
                   <option key={group} value={group}>
                     {group.charAt(0).toUpperCase() + group.slice(1)}
@@ -179,14 +179,14 @@ export default function ExercisesPage() {
             {/* Equipment Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Equipment
+                Oprema
               </label>
               <select
                 value={filters.equipment}
                 onChange={(e) => handleFilterChange('equipment', e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               >
-                <option value="">All</option>
+                <option value="">Sve</option>
                 {Object.values(Equipment).map((eq) => (
                   <option key={eq} value={eq}>
                     {eq.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
@@ -198,14 +198,14 @@ export default function ExercisesPage() {
             {/* Difficulty Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Difficulty
+                Težina
               </label>
               <select
                 value={filters.difficulty}
                 onChange={(e) => handleFilterChange('difficulty', e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               >
-                <option value="">All</option>
+                <option value="">Sve</option>
                 {Object.values(Difficulty).map((diff) => (
                   <option key={diff} value={diff}>
                     {diff.charAt(0).toUpperCase() + diff.slice(1)}
@@ -220,7 +220,7 @@ export default function ExercisesPage() {
         {/* Results Count */}
         <div className="mb-4">
           <p className="text-gray-600">
-            {isLoading ? 'Loading...' : activeTab === 'local' ? `${exercises.length} exercises found` : `${wgerExercises.length} exercises found`}
+            {isLoading ? 'Učitavanje...' : activeTab === 'local' ? `${exercises.length} vežbi pronađeno` : `${wgerExercises.length} vežbi pronađeno`}
           </p>
         </div>
 
@@ -236,7 +236,7 @@ export default function ExercisesPage() {
           exercises.length === 0 ? (
             <div className="text-center py-12">
               <Dumbbell className="mx-auto text-gray-400 mb-4" size={64} />
-              <p className="text-gray-600">No exercises found</p>
+              <p className="text-gray-600">Nema pronađenih vežbi</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -261,7 +261,7 @@ export default function ExercisesPage() {
                         {exercise.difficulty}
                       </span>
                       <Button variant="ghost" size="sm">
-                        View Details
+                        Pogledaj detalje
                       </Button>
                     </div>
                   }
@@ -279,9 +279,9 @@ export default function ExercisesPage() {
             <Card>
               <div className="text-center py-12">
                 <Database className="mx-auto text-gray-400 mb-4" size={64} />
-                <p className="text-gray-600">Search for exercises in Wger database</p>
+                <p className="text-gray-600">Pretražite vežbe u Wger bazi</p>
                 <p className="text-sm text-gray-500 mt-2">
-                  Try: "bench press", "squat", "deadlift"
+                  Pokušajte: "bench press", "squat", "deadlift"
                 </p>
               </div>
             </Card>
@@ -306,7 +306,7 @@ export default function ExercisesPage() {
                       variant="outline"
                       onClick={() => window.open(`https://wger.de/en/exercise/${exercise.id}/view`, '_blank')}
                     >
-                      View on Wger
+                      Pogledaj na Wgeru
                     </Button>
                   </div>
                 </Card>
@@ -320,15 +320,15 @@ export default function ExercisesPage() {
           <Card className="mt-8 bg-blue-50">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-semibold text-blue-900">Admin: Sync Wger Exercises</h3>
+                <h3 className="font-semibold text-blue-900">Admin: Sinhronizacija Wger vežbi</h3>
                 <p className="text-sm text-blue-700 mt-1">
-                  Import exercises from Wger database to local Firestore
+                  Uvezite vežbe iz Wger baze u lokalnu Firestore
                 </p>
               </div>
               <Button
                 variant="primary"
                 onClick={async () => {
-                  if (!confirm('Sync 100 exercises from Wger?')) return;
+                  if (!confirm('Sinhronizovati 100 vežbi sa Wgera?')) return;
 
                   const response = await apiFetch('/api/wger/sync', {
                     method: 'POST',
@@ -338,14 +338,14 @@ export default function ExercisesPage() {
 
                   const data = await response.json();
                   if (data.success) {
-                    alert(`Synced ${data.data.synced} exercises!`);
+                    alert(`Sinhronizovano ${data.data.synced} vežbi!`);
                     fetchExercises();
                   } else {
-                    alert('Sync failed: ' + data.error);
+                    alert('Sinhronizacija neuspešna: ' + data.error);
                   }
                 }}
               >
-                Sync from Wger
+                Sinhronizuj sa Wgera
               </Button>
             </div>
           </Card>

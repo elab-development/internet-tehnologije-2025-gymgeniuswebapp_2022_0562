@@ -60,7 +60,7 @@ export default function ChallengeDetailPage() {
   }, [isAuthenticated, params.id]);
 
   if (authLoading || isLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center">Učitavanje...</div>;
   }
 
   if (!isAuthenticated) {
@@ -69,7 +69,7 @@ export default function ChallengeDetailPage() {
   }
 
   if (!challenge) {
-    return <div>Challenge not found</div>;
+    return <div>Izazov nije pronađen</div>;
   }
 
   return (
@@ -84,7 +84,7 @@ export default function ChallengeDetailPage() {
           leftIcon={<ArrowLeft size={20} />}
           className="mb-6"
         >
-          Back to Challenges
+          Nazad na izazove
         </Button>
 
         {/* Challenge Header */}
@@ -95,10 +95,10 @@ export default function ChallengeDetailPage() {
               <p className="text-gray-600 mb-4">{challenge.description}</p>
               <div className="flex gap-4 text-sm text-gray-700">
                 <span>
-                  <strong>Goal:</strong> {challenge.targetValue} {challenge.targetUnit}
+                  <strong>Cilj:</strong> {challenge.targetValue} {challenge.targetUnit}
                 </span>
                 <span>
-                  <strong>Participants:</strong> {challenge.participantCount}
+                  <strong>Učesnici:</strong> {challenge.participantCount}
                 </span>
                 <span>
                   <strong>Status:</strong>{' '}
@@ -118,17 +118,17 @@ export default function ChallengeDetailPage() {
               onClick={handleUpdateProgress}
               leftIcon={<TrendingUp size={20} />}
             >
-              Log Progress (+1)
+              Zabilježi napredak (+1)
             </Button>
           </div>
         </Card>
 
         {/* Leaderboard */}
         <Card>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">🏆 Leaderboard</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">🏆 Rang lista</h2>
 
           {leaderboard.length === 0 ? (
-            <p className="text-center text-gray-500 py-8">No participants yet</p>
+            <p className="text-center text-gray-500 py-8">Nema učesnika</p>
           ) : (
             <div className="space-y-3">
               {leaderboard.map((participant, index) => (
@@ -166,7 +166,7 @@ export default function ChallengeDetailPage() {
                         {participant.displayName}
                       </p>
                       <p className="text-sm text-gray-600">
-                        Streak: {participant.currentStreak} days
+                        Serija: {participant.currentStreak} dana
                       </p>
                     </div>
                   </div>
@@ -180,7 +180,7 @@ export default function ChallengeDetailPage() {
                       {Math.round(
                         (participant.currentProgress / challenge.targetValue) * 100
                       )}
-                      % complete
+                      % završeno
                     </p>
                   </div>
                 </div>

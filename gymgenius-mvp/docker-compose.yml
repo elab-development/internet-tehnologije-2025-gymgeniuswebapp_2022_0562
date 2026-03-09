@@ -1,6 +1,39 @@
 version: '3.8'
 
 services:
+  # Ollama AI server
+  ollama:
+    image: ollama/ollama:latest
+    container_name: gymgenius-ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    networks:
+      - gymgenius-network
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  # Init kontejner - pull-uje llama3.2 model jednom
+  # Modeli se cuvaju u ollama_data volumenu i traju izmedju restartova
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: gymgenius-ollama-init
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    entrypoint: ["/bin/sh", "-c", "echo 'Pulling llama3.2 model...' && ollama pull llama3.2 && echo 'Model ready!'"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+    networks:
+      - gymgenius-network
+    restart: "no"
+
   # Next.js aplikacija
   app:
     build:
@@ -13,9 +46,19 @@ services:
       - .env
     environment:
       - NODE_ENV=production
+      # Overriduje OLLAMA_BASE_URL iz .env - unutar Dockera koristimo servis ime
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - AI_PROVIDER=ollama
+    depends_on:
+      ollama:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - gymgenius-network
+
+volumes:
+  ollama_data:
+    name: gymgenius-ollama-data
 
 networks:
   gymgenius-network:

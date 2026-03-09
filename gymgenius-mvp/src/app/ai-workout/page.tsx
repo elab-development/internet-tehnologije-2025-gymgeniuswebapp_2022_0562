@@ -75,7 +75,7 @@ export default function AIWorkoutPage() {
   };
 
   if (authLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center">Učitavanje...</div>;
   }
 
   if (!isAuthenticated) {
@@ -92,10 +92,10 @@ export default function AIWorkoutPage() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Cpu className="text-primary-600" size={32} />
-            <h1 className="text-3xl font-bold text-gray-900">AI Workout Generator</h1>
+            <h1 className="text-3xl font-bold text-gray-900">AI Generator treninga</h1>
           </div>
           <p className="text-gray-600 mb-2">
-            Powered by <strong>Ollama (Llama 3.2)</strong> - Local AI
+            Pokrenuto pomoću <strong>Ollama (Llama 3.2)</strong> - Lokalni AI
           </p>
 
           {/* Ollama Status Badge */}
@@ -112,10 +112,10 @@ export default function AIWorkoutPage() {
             <span className="text-gray-600">
               Ollama:{' '}
               {ollamaStatus === 'healthy'
-                ? '✅ Online'
+                ? '✅ Dostupan'
                 : ollamaStatus === 'unavailable'
-                ? '❌ Offline (using fallback)'
-                : '⏳ Checking...'}
+                ? '❌ Nedostupan (koristi fallback)'
+                : '⏳ Proveravamo...'}
             </span>
           </div>
         </div>
@@ -127,41 +127,41 @@ export default function AIWorkoutPage() {
               {/* Goal */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Fitness Goal
+                  Fitness cilj
                 </label>
                 <select
                   value={formData.goal}
                   onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                 >
-                  <option value="weight_loss">Weight Loss</option>
-                  <option value="muscle_gain">Muscle Gain</option>
-                  <option value="strength">Strength</option>
-                  <option value="endurance">Endurance</option>
-                  <option value="general_fitness">General Fitness</option>
+                  <option value="weight_loss">Gubitak težine</option>
+                  <option value="muscle_gain">Povećanje mišića</option>
+                  <option value="strength">Snaga</option>
+                  <option value="endurance">Izdržljivost</option>
+                  <option value="general_fitness">Opšta kondicija</option>
                 </select>
               </div>
 
               {/* Experience */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Experience Level
+                  Nivo iskustva
                 </label>
                 <select
                   value={formData.experience}
                   onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                 >
-                  <option value="beginner">Beginner</option>
-                  <option value="intermediate">Intermediate</option>
-                  <option value="advanced">Advanced</option>
+                  <option value="beginner">Početnik</option>
+                  <option value="intermediate">Srednji nivo</option>
+                  <option value="advanced">Napredni</option>
                 </select>
               </div>
 
               {/* Days per week */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Training Days per Week: {formData.daysPerWeek}
+                  Dani treninga nedeljno: {formData.daysPerWeek}
                 </label>
                 <input
                   type="range"
@@ -178,7 +178,7 @@ export default function AIWorkoutPage() {
               {/* Duration */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Program Duration (weeks)
+                  Trajanje programa (nedelje)
                 </label>
                 <input
                   type="number"
@@ -207,11 +207,11 @@ export default function AIWorkoutPage() {
                 onClick={handleGenerate}
                 isLoading={isGenerating}
               >
-                {isGenerating ? 'Generating with Llama 3.2...' : 'Generate AI Workout Plan'}
+                {isGenerating ? 'Generišem sa Llama 3.2...' : 'Generiši AI plan treninga'}
               </Button>
 
               <p className="text-xs text-gray-500 text-center">
-                💡 Using local Ollama (Llama 3.2) - Free and private!
+                💡 Korišćenje lokalnog Ollama (Llama 3.2) - Besplatno i privatno!
               </p>
             </div>
           </Card>
@@ -228,7 +228,7 @@ export default function AIWorkoutPage() {
 
               {/* Weekly Schedule */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Weekly Schedule</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Nedeljni raspored</h3>
                 {generatedPlan.weeklySchedule?.map((day: any, index: number) => (
                   <div key={index} className="border-l-4 border-primary-500 pl-4">
                     <h4 className="font-medium text-gray-900">{day.dayName}</h4>
@@ -247,7 +247,7 @@ export default function AIWorkoutPage() {
               {/* Progression Notes */}
               {generatedPlan.progressionNotes && (
                 <div className="mt-6 bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-blue-900 mb-2">📈 Progression</h4>
+                  <h4 className="font-semibold text-blue-900 mb-2">📈 Napredovanje</h4>
                   <p className="text-sm text-blue-800">{generatedPlan.progressionNotes}</p>
                 </div>
               )}
@@ -255,7 +255,7 @@ export default function AIWorkoutPage() {
               {/* Nutrition Tips */}
               {generatedPlan.nutritionTips && (
                 <div className="mt-4 bg-green-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-green-900 mb-2">🍎 Nutrition</h4>
+                  <h4 className="font-semibold text-green-900 mb-2">🍎 Ishrana</h4>
                   <p className="text-sm text-green-800">{generatedPlan.nutritionTips}</p>
                 </div>
               )}
@@ -263,10 +263,10 @@ export default function AIWorkoutPage() {
               {/* Actions */}
               <div className="flex gap-4 mt-6">
                 <Button variant="primary" onClick={() => router.push('/dashboard')}>
-                  Go to Dashboard
+                  Idi na kontrolnu tablu
                 </Button>
                 <Button variant="outline" onClick={() => setGeneratedPlan(null)}>
-                  Generate New Plan
+                  Generiši novi plan
                 </Button>
               </div>
             </Card>

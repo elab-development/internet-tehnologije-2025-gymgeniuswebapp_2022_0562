@@ -67,10 +67,10 @@ export default function DashboardPage() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            Welcome back, {user?.displayName || 'Athlete'}! 💪
+            Dobrodošli nazad, {user?.displayName || 'Sportista'}! 💪
           </h1>
           <p className="text-gray-600 mt-2">
-            Here's your fitness overview for today
+            Evo vašeg fitness pregleda za danas
           </p>
         </div>
 
@@ -80,7 +80,7 @@ export default function DashboardPage() {
           <Card className="border-l-4 border-primary-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Total Workouts</p>
+                <p className="text-sm text-gray-600 mb-1">Ukupno treninga</p>
                 <p className="text-3xl font-bold text-gray-900">
                   {stats.totalWorkouts}
                 </p>
@@ -95,9 +95,9 @@ export default function DashboardPage() {
           <Card className="border-l-4 border-green-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Current Streak</p>
+                <p className="text-sm text-gray-600 mb-1">Trenutni niz</p>
                 <p className="text-3xl font-bold text-gray-900">
-                  {stats.currentStreak} days
+                  {stats.currentStreak} dana
                 </p>
               </div>
               <div className="bg-green-100 p-3 rounded-full">
@@ -110,7 +110,7 @@ export default function DashboardPage() {
           <Card className="border-l-4 border-orange-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Active Goals</p>
+                <p className="text-sm text-gray-600 mb-1">Aktivni ciljevi</p>
                 <p className="text-3xl font-bold text-gray-900">
                   {stats.activeGoals}
                 </p>
@@ -125,7 +125,7 @@ export default function DashboardPage() {
           <Card className="border-l-4 border-purple-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Weekly Progress</p>
+                <p className="text-sm text-gray-600 mb-1">Nedeljni napredak</p>
                 <p className="text-3xl font-bold text-gray-900">
                   {stats.weeklyProgress}%
                 </p>
@@ -141,40 +141,40 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Today's Workout */}
           <Card
-            title="Today's Workout"
-            subtitle="Push Day - Upper Body"
+            title="Trening za danas"
+            subtitle="Dan za gurkanje - Gornji deo tela"
             hoverable
           >
             <div className="space-y-3 mb-4">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Duration:</span>
-                <span className="font-medium">60 minutes</span>
+                <span className="text-gray-600">Trajanje:</span>
+                <span className="font-medium">60 minuta</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Exercises:</span>
-                <span className="font-medium">6 exercises</span>
+                <span className="text-gray-600">Vežbe:</span>
+                <span className="font-medium">6 vežbi</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Difficulty:</span>
-                <span className="font-medium text-orange-600">Intermediate</span>
+                <span className="text-gray-600">Težina:</span>
+                <span className="font-medium text-orange-600">Srednji nivo</span>
               </div>
             </div>
 
             <Button variant="primary" fullWidth onClick={() => router.push('/exercises')}>
-              Start Workout
+              Počni trening
             </Button>
           </Card>
 
           {/* Recent Activity */}
-          <Card title="Recent Activity">
+          <Card title="Nedavna aktivnost">
             <div className="space-y-3">
               <div className="flex items-center gap-3 pb-3 border-b">
                 <div className="bg-green-100 p-2 rounded-full">
                   <Dumbbell className="text-green-600" size={16} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">Completed Leg Day</p>
-                  <p className="text-xs text-gray-500">2 days ago</p>
+                  <p className="text-sm font-medium">Završio Dan za noge</p>
+                  <p className="text-xs text-gray-500">pre 2 dana</p>
                 </div>
               </div>
 
@@ -183,8 +183,8 @@ export default function DashboardPage() {
                   <Target className="text-blue-600" size={16} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">New goal set: Bench 100kg</p>
-                  <p className="text-xs text-gray-500">3 days ago</p>
+                  <p className="text-sm font-medium">Novi cilj: Bench 100kg</p>
+                  <p className="text-xs text-gray-500">pre 3 dana</p>
                 </div>
               </div>
 
@@ -193,8 +193,8 @@ export default function DashboardPage() {
                   <TrendingUp className="text-purple-600" size={16} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">5-day streak achieved!</p>
-                  <p className="text-xs text-gray-500">5 days ago</p>
+                  <p className="text-sm font-medium">Dostignut niz od 5 dana!</p>
+                  <p className="text-xs text-gray-500">pre 5 dana</p>
                 </div>
               </div>
             </div>
@@ -205,13 +205,13 @@ export default function DashboardPage() {
         <Card className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl font-bold mb-2">🤖 AI Recommendation</h3>
+              <h3 className="text-xl font-bold mb-2">🤖 AI Preporuka</h3>
               <p className="text-primary-50 mb-4">
-                Based on your progress, we recommend focusing on progressive overload
-                for compound movements this week.
+                Na osnovu vašeg napretka, preporučujemo da se fokusirate na progresivno
+                opterećenje za složena vežbe ove nedelje.
               </p>
               <Button variant="outline" className="bg-white text-primary-700 border-white hover:bg-primary-50" onClick={() => router.push('/ai-workout')}>
-                Generate New Plan
+                Generiši novi plan
               </Button>
             </div>
           </div>

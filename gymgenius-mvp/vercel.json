@@ -18,7 +18,9 @@
     "FIREBASE_ADMIN_PRIVATE_KEY": "@firebase-admin-private-key",
     "JWT_SECRET": "@jwt-secret",
     "CSRF_SECRET": "@csrf-secret",
-    "OPENAI_API_KEY": "@openai-api-key",
+    "GROQ_API_KEY": "@groq-api-key",
+    "AI_PROVIDER": "@ai-provider",
+    "GROQ_MODEL": "@groq-model",
     "NUTRITIONIX_APP_ID": "@nutritionix-app-id",
     "NUTRITIONIX_API_KEY": "@nutritionix-api-key",
     "NEXT_PUBLIC_APP_URL": "@app-url"
