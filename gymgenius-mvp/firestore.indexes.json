@@ -60,6 +60,14 @@
       ]
     },
     {
+      "collectionGroup": "workoutLogs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "date", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "challenges",
       "queryScope": "COLLECTION",
       "fields": [

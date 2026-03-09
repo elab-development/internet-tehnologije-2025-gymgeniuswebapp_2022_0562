@@ -1,12 +1,15 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Dumbbell } from 'lucide-react';
 
 interface CardProps {
   title?: string;
   subtitle?: string;
   image?: string;
   imageAlt?: string;
+  /** Tailwind bg-gradient-to-br classes shown when the image fails to load, e.g. "from-red-500 to-orange-600" */
+  imageGradient?: string;
   children?: React.ReactNode;
   footer?: React.ReactNode;
   onClick?: () => void;
@@ -33,13 +36,15 @@ export default function Card({
   subtitle,
   image,
   imageAlt = '',
+  imageGradient = 'from-gray-500 to-gray-700',
   children,
   footer,
   onClick,
   className = '',
   hoverable = false,
 }: CardProps) {
-  
+  const [imgError, setImgError] = useState(false);
+
   // Base stilovi
   const baseStyles = 'bg-white rounded-lg shadow-md overflow-hidden transition-all duration-200';
 
@@ -55,12 +60,21 @@ export default function Card({
     <div className={cardStyles} onClick={onClick}>
       {/* Image */}
       {image && (
-        <div className="relative h-48 w-full overflow-hidden bg-gray-200">
-          <img
-            src={image}
-            alt={imageAlt}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-          />
+        <div className="relative h-48 w-full overflow-hidden">
+          {imgError ? (
+            <div
+              className={`w-full h-full bg-gradient-to-br ${imageGradient} flex items-center justify-center`}
+            >
+              <Dumbbell className="text-white opacity-60" size={48} />
+            </div>
+          ) : (
+            <img
+              src={image}
+              alt={imageAlt}
+              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+              onError={() => setImgError(true)}
+            />
+          )}
         </div>
       )}
 

@@ -35,8 +35,11 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Kopiraj public folder
-COPY --from=builder /app/public ./public
+# Kopiraj public folder sa ispravnim vlasnistvom
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+
+# Kreiraj uploads direktorijum sa ispravnim permisijama (za runtime upload-ove)
+RUN mkdir -p ./uploads/progress-photos && chown -R nextjs:nodejs ./uploads
 
 # Kopiraj build output
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./

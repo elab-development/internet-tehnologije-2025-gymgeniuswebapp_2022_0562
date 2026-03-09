@@ -13,6 +13,15 @@ interface DashboardStats {
   currentStreak: number;
   activeGoals: number;
   weeklyProgress: number;
+  weeklyWorkouts: number;
+}
+
+interface RecentActivity {
+  id: string;
+  label: string;
+  sub: string;
+  color: string;
+  icon: 'dumbbell' | 'target' | 'trending';
 }
 
 export default function DashboardPage() {
@@ -23,28 +32,75 @@ export default function DashboardPage() {
     currentStreak: 0,
     activeGoals: 0,
     weeklyProgress: 0,
+    weeklyWorkouts: 0,
   });
+  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
+  const [statsLoading, setStatsLoading] = useState(true);
 
-  // Redirect ako nije autentifikovan
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.push('/login');
     }
   }, [isAuthenticated, isLoading, router]);
 
-  // Simulirani podaci (u realnoj app bi fetch-ovali iz API-ja)
   useEffect(() => {
-    if (isAuthenticated) {
-      // Simulacija API poziva
-      setTimeout(() => {
-        setStats({
-          totalWorkouts: 24,
-          currentStreak: 5,
-          activeGoals: 3,
-          weeklyProgress: 75,
+    if (!isAuthenticated) return;
+
+    async function fetchDashboardData() {
+      setStatsLoading(true);
+      try {
+        const [logsRes, goalsRes] = await Promise.all([
+          fetch('/api/workout-logs?limit=50'),
+          fetch('/api/goals?status=active'),
+        ]);
+
+        const logsData = logsRes.ok ? await logsRes.json() : null;
+        const goalsData = goalsRes.ok ? await goalsRes.json() : null;
+
+        const logs: any[] = logsData?.data?.logs ?? [];
+        const activeGoals: number = goalsData?.data?.total ?? 0;
+
+        // Ukupno treninga - koristimo pravi total iz API-ja (nije ograničen limitom)
+        const totalWorkouts: number = logsData?.data?.total ?? logs.length;
+
+        // Streak: broj uzastopnih dana sa treningom (od danas unazad)
+        const streak = calculateStreak(logs);
+
+        // Nedeljni napredak: koliko treninga u poslednjih 7 dana (target: 5)
+        // Koristimo lokalni datum da izbegnemo UTC timezone problem
+        const now = Date.now();
+        const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+        const thisWeekCount = logs.filter((log) => {
+          const d = log.date?.toDate ? log.date.toDate() : new Date(log.date ?? log.createdAt);
+          return d.getTime() >= weekAgo;
+        }).length;
+        const weeklyProgress = Math.min(Math.round((thisWeekCount / 5) * 100), 100);
+
+        setStats({ totalWorkouts, currentStreak: streak, activeGoals, weeklyProgress, weeklyWorkouts: thisWeekCount });
+
+        // Nedavna aktivnost - poslednjih 3 treninga
+        const recent: RecentActivity[] = logs.slice(0, 3).map((log) => {
+          const d = log.date?.toDate ? log.date.toDate() : new Date(log.date ?? log.createdAt);
+          const daysAgo = Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
+          const timeLabel = daysAgo === 0 ? 'danas' : daysAgo === 1 ? 'juče' : `pre ${daysAgo} dana`;
+          return {
+            id: log.logId ?? log.id,
+            label: log.notes ? log.notes : `Trening - ${log.duration ?? 0} min`,
+            sub: timeLabel,
+            color: 'green',
+            icon: 'dumbbell',
+          };
         });
-      }, 500);
+
+        setRecentActivity(recent);
+      } catch (err) {
+        console.error('Dashboard fetch error:', err);
+      } finally {
+        setStatsLoading(false);
+      }
     }
+
+    fetchDashboardData();
   }, [isAuthenticated]);
 
   if (isLoading) {
@@ -67,7 +123,7 @@ export default function DashboardPage() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            Dobrodošli nazad, {user?.displayName || 'Sportista'}! 💪
+            Dobrodošli nazad, {user?.displayName || 'Sportista'}!
           </h1>
           <p className="text-gray-600 mt-2">
             Evo vašeg fitness pregleda za danas
@@ -76,13 +132,12 @@ export default function DashboardPage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Stat Card 1 */}
           <Card className="border-l-4 border-primary-500">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Ukupno treninga</p>
                 <p className="text-3xl font-bold text-gray-900">
-                  {stats.totalWorkouts}
+                  {statsLoading ? '—' : stats.totalWorkouts}
                 </p>
               </div>
               <div className="bg-primary-100 p-3 rounded-full">
@@ -91,13 +146,12 @@ export default function DashboardPage() {
             </div>
           </Card>
 
-          {/* Stat Card 2 */}
           <Card className="border-l-4 border-green-500">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Trenutni niz</p>
                 <p className="text-3xl font-bold text-gray-900">
-                  {stats.currentStreak} dana
+                  {statsLoading ? '—' : `${stats.currentStreak} dana`}
                 </p>
               </div>
               <div className="bg-green-100 p-3 rounded-full">
@@ -106,13 +160,12 @@ export default function DashboardPage() {
             </div>
           </Card>
 
-          {/* Stat Card 3 */}
           <Card className="border-l-4 border-orange-500">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Aktivni ciljevi</p>
                 <p className="text-3xl font-bold text-gray-900">
-                  {stats.activeGoals}
+                  {statsLoading ? '—' : stats.activeGoals}
                 </p>
               </div>
               <div className="bg-orange-100 p-3 rounded-full">
@@ -121,13 +174,12 @@ export default function DashboardPage() {
             </div>
           </Card>
 
-          {/* Stat Card 4 */}
           <Card className="border-l-4 border-purple-500">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Nedeljni napredak</p>
                 <p className="text-3xl font-bold text-gray-900">
-                  {stats.weeklyProgress}%
+                  {statsLoading ? '—' : `${stats.weeklyProgress}%`}
                 </p>
               </div>
               <div className="bg-purple-100 p-3 rounded-full">
@@ -139,65 +191,69 @@ export default function DashboardPage() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {/* Today's Workout */}
+          {/* Start Workout */}
           <Card
-            title="Trening za danas"
-            subtitle="Dan za gurkanje - Gornji deo tela"
+            title="Spremi se za trening"
+            subtitle="Pretraži vežbe ili generiši AI plan"
             hoverable
           >
             <div className="space-y-3 mb-4">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Trajanje:</span>
-                <span className="font-medium">60 minuta</span>
+                <span className="text-gray-600">Treninga ove nedelje:</span>
+                <span className="font-medium">
+                  {statsLoading ? '—' : stats.weeklyWorkouts}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Vežbe:</span>
-                <span className="font-medium">6 vežbi</span>
+                <span className="text-gray-600">Aktivnih ciljeva:</span>
+                <span className="font-medium">{statsLoading ? '—' : stats.activeGoals}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Težina:</span>
-                <span className="font-medium text-orange-600">Srednji nivo</span>
+                <span className="text-gray-600">Nedeljni target:</span>
+                <span className="font-medium text-orange-600">5 treninga</span>
               </div>
             </div>
 
             <Button variant="primary" fullWidth onClick={() => router.push('/exercises')}>
-              Počni trening
+              Pregledaj vežbe
             </Button>
           </Card>
 
           {/* Recent Activity */}
           <Card title="Nedavna aktivnost">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 pb-3 border-b">
-                <div className="bg-green-100 p-2 rounded-full">
-                  <Dumbbell className="text-green-600" size={16} />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Završio Dan za noge</p>
-                  <p className="text-xs text-gray-500">pre 2 dana</p>
-                </div>
+            {statsLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
               </div>
-
-              <div className="flex items-center gap-3 pb-3 border-b">
-                <div className="bg-blue-100 p-2 rounded-full">
-                  <Target className="text-blue-600" size={16} />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Novi cilj: Bench 100kg</p>
-                  <p className="text-xs text-gray-500">pre 3 dana</p>
-                </div>
+            ) : recentActivity.length === 0 ? (
+              <div className="text-center py-6">
+                <p className="text-gray-500 text-sm">Još nema zabeleženih treninga.</p>
+                <Button
+                  variant="outline"
+                  className="mt-3"
+                  onClick={() => router.push('/exercises')}
+                >
+                  Počni prvi trening
+                </Button>
               </div>
-
-              <div className="flex items-center gap-3">
-                <div className="bg-purple-100 p-2 rounded-full">
-                  <TrendingUp className="text-purple-600" size={16} />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Dostignut niz od 5 dana!</p>
-                  <p className="text-xs text-gray-500">pre 5 dana</p>
-                </div>
+            ) : (
+              <div className="space-y-3">
+                {recentActivity.map((item, idx) => (
+                  <div
+                    key={item.id}
+                    className={`flex items-center gap-3 pb-3 ${idx < recentActivity.length - 1 ? 'border-b' : ''}`}
+                  >
+                    <div className="bg-green-100 p-2 rounded-full">
+                      <Dumbbell className="text-green-600" size={16} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{item.label}</p>
+                      <p className="text-xs text-gray-500">{item.sub}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
+            )}
           </Card>
         </div>
 
@@ -205,7 +261,7 @@ export default function DashboardPage() {
         <Card className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl font-bold mb-2">🤖 AI Preporuka</h3>
+              <h3 className="text-xl font-bold mb-2">AI Preporuka</h3>
               <p className="text-primary-50 mb-4">
                 Na osnovu vašeg napretka, preporučujemo da se fokusirate na progresivno
                 opterećenje za složena vežbe ove nedelje.
@@ -219,4 +275,47 @@ export default function DashboardPage() {
       </main>
     </div>
   );
+}
+
+/**
+ * Računa streak: broj uzastopnih dana sa bar jednim treningom, unazad od danas
+ */
+/** Vraća datum u lokalnom formatu YYYY-MM-DD (bez UTC konverzije) */
+function toLocalDateKey(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+/**
+ * Računa streak: broj uzastopnih dana sa bar jednim treningom, unazad od danas
+ */
+function calculateStreak(logs: any[]): number {
+  if (logs.length === 0) return 0;
+
+  const trainingDays = new Set(
+    logs.map((log) => {
+      const d = log.date?.toDate ? log.date.toDate() : new Date(log.date ?? log.createdAt);
+      return toLocalDateKey(d);
+    })
+  );
+
+  let streak = 0;
+  const today = new Date();
+
+  for (let i = 0; i < 365; i++) {
+    const day = new Date(today);
+    day.setDate(today.getDate() - i);
+    const key = toLocalDateKey(day);
+
+    if (trainingDays.has(key)) {
+      streak++;
+    } else if (i > 0) {
+      // Prekid niza (i === 0 preskačemo - možda danas još nije trenirao)
+      break;
+    }
+  }
+
+  return streak;
 }

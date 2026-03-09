@@ -49,7 +49,7 @@ export async function DELETE(
 
     // Delete from local filesystem
     try {
-      const absolutePath = path.join(process.cwd(), 'public', photoData.storagePath);
+      const absolutePath = path.join(process.cwd(), 'uploads', photoData.storagePath);
       if (fs.existsSync(absolutePath)) {
         fs.unlinkSync(absolutePath);
       }

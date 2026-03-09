@@ -49,6 +49,8 @@ services:
       # Overriduje OLLAMA_BASE_URL iz .env - unutar Dockera koristimo servis ime
       - OLLAMA_BASE_URL=http://ollama:11434
       - AI_PROVIDER=ollama
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
       ollama:
         condition: service_healthy
@@ -59,6 +61,8 @@ services:
 volumes:
   ollama_data:
     name: gymgenius-ollama-data
+  uploads_data:
+    name: gymgenius-uploads-data
 
 networks:
   gymgenius-network:

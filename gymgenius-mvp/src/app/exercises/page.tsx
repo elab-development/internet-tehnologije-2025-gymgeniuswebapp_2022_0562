@@ -10,6 +10,7 @@ import Button from '@/components/ui/Button';
 import { useAuth } from '@/hooks/useAuth';
 import { apiFetch } from '@/utils/api-client';
 import { Exercise, MuscleGroup, Equipment, Difficulty } from '@/types/models';
+import { getExerciseImageUrl, getMuscleGroupGradient, GENERIC_GYM_IMAGE } from '@/utils/exerciseImages';
 
 export default function ExercisesPage() {
   const router = useRouter();
@@ -245,7 +246,8 @@ export default function ExercisesPage() {
                   key={exercise.exerciseId}
                   title={exercise.name}
                   subtitle={`${exercise.primaryMuscleGroup} • ${exercise.equipment}`}
-                  image={exercise.thumbnailUrl || '/placeholder-exercise.jpg'}
+                  image={getExerciseImageUrl(exercise.primaryMuscleGroup, exercise.thumbnailUrl)}
+                  imageGradient={getMuscleGroupGradient(exercise.primaryMuscleGroup)}
                   imageAlt={exercise.name}
                   hoverable
                   onClick={() => router.push(`/exercises/${exercise.exerciseId}`)}
@@ -292,6 +294,9 @@ export default function ExercisesPage() {
                   key={exercise.id}
                   title={exercise.name}
                   subtitle={`Wger ID: ${exercise.id}`}
+                  image={GENERIC_GYM_IMAGE}
+                  imageGradient="from-gray-500 to-slate-700"
+                  imageAlt={exercise.name}
                   hoverable
                 >
                   <div

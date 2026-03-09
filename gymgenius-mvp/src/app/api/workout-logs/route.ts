@@ -77,16 +77,20 @@ export async function GET(request: NextRequest) {
     const snapshot = await adminDb
       .collection('workoutLogs')
       .where('userId', '==', userId)
-      .orderBy('date', 'desc')
-      .limit(limit)
       .get();
 
-    const logs: WorkoutLog[] = snapshot.docs.map((doc) => ({
-      logId: doc.id,
-      ...doc.data(),
-    } as WorkoutLog));
+    const allLogs: WorkoutLog[] = snapshot.docs
+      .map((doc) => ({ logId: doc.id, ...doc.data() } as WorkoutLog))
+      .sort((a: any, b: any) => {
+        const dateA = a.date?.toDate ? a.date.toDate().getTime() : new Date(a.date ?? a.createdAt).getTime();
+        const dateB = b.date?.toDate ? b.date.toDate().getTime() : new Date(b.date ?? b.createdAt).getTime();
+        return dateB - dateA;
+      });
 
-    return successResponse({ logs, total: logs.length });
+    const totalCount = allLogs.length;
+    const logs = allLogs.slice(0, limit);
+
+    return successResponse({ logs, total: totalCount });
   } catch (error) {
     console.error('Get workout logs error:', error);
     return errorResponse('Failed to fetch workout logs', 500);
