@@ -97,10 +97,16 @@ export async function GET(request: NextRequest) {
       .orderBy('deadline', 'asc')
       .get();
 
-    const goals: Goal[] = snapshot.docs.map((doc) => ({
-      goalId: doc.id,
-      ...doc.data(),
-    } as Goal));
+    const goals: Goal[] = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        goalId: doc.id,
+        ...data,
+        deadline: data.deadline?.toDate?.()?.toISOString() ?? data.deadline,
+        createdAt: data.createdAt?.toDate?.()?.toISOString() ?? data.createdAt,
+        updatedAt: data.updatedAt?.toDate?.()?.toISOString() ?? data.updatedAt,
+      } as Goal;
+    });
 
     return successResponse({ goals, total: goals.length });
   } catch (error) {
@@ -138,7 +144,7 @@ export async function POST(request: NextRequest) {
       userId,
       type,
       title,
-      description: description || undefined,
+      ...(description ? { description } : {}),
       targetValue: Number(targetValue),
       currentValue: Number(currentValue),
       unit,

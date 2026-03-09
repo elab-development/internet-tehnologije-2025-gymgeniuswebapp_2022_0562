@@ -6,6 +6,7 @@ import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { isValidEmail } from '@/utils/validation';
+import { apiFetch } from '@/utils/api-client';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -28,9 +29,8 @@ export default function ForgotPasswordPage() {
 
     setIsLoading(true);
     try {
-      const response = await fetch('/api/auth/reset-password', {
+      const response = await apiFetch('/api/auth/reset-password', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
       const data = await response.json();

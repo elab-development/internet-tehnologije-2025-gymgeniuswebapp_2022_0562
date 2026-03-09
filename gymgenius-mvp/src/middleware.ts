@@ -7,8 +7,8 @@ import { generateCsrfToken, validateCsrfToken, isStateChangingMethod } from '@/l
 // Routes that require authenticated user
 const protectedRoutes = [
   '/dashboard', '/profile', '/premium', '/nutrition', '/progress',
-  '/challenges', '/ai-workout', '/exercises',
-  '/api/workouts', '/api/challenges', '/api/meals', '/api/stats',
+  '/challenges', '/ai-workout', '/exercises', '/workouts',
+  '/api/workouts', '/api/workout-logs', '/api/challenges', '/api/meals', '/api/stats',
   '/api/goals', '/api/nutrition', '/api/users', '/api/progress',
   '/api/premium', '/api/notifications', '/api/ai',
   '/api/exercises', '/api/wger', '/api/preferences',
@@ -49,6 +49,7 @@ export async function middleware(request: NextRequest) {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         path: '/',
+        maxAge: 60 * 60 * 24 * 7,
       });
     }
     return response;
@@ -117,6 +118,7 @@ export async function middleware(request: NextRequest) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       path: '/',
+      maxAge: 60 * 60 * 24 * 7,
     });
   }
 
@@ -127,7 +129,7 @@ function addSecurityHeaders(response: NextResponse) {
   response.headers.set('Content-Security-Policy', [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://www.google.com",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.gstatic.com",
     "img-src 'self' data: https: blob:",
     "font-src 'self' https://fonts.gstatic.com",
     "connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://api.openai.com https://trackapi.nutritionix.com http://localhost:11434",

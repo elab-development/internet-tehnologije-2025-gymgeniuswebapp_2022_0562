@@ -3,13 +3,13 @@
 import ProgressChart from './ProgressChart';
 
 interface WorkoutVolumeChartProps {
-  data: Array<{ date: Date; volume: number; duration: number }>;
+  data: Array<{ date: string; volume: number; duration: number }>;
 }
 
 export default function WorkoutVolumeChart({ data }: WorkoutVolumeChartProps) {
   const chartData = [
     ['Date', 'Volume (kg)', 'Duration (min)'],
-    ...data.map((item) => [item.date.toLocaleDateString(), item.volume, item.duration]),
+    ...data.map((item) => [new Date(item.date).toLocaleDateString(), item.volume, item.duration]),
   ];
 
   return (

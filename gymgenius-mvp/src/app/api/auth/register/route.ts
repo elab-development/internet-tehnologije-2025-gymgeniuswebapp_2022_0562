@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
       email: userRecord.email!,
       role: UserRole.USER,
       emailVerified: false,
-      displayName: displayName ? sanitizeString(displayName) : undefined,
+      ...(displayName ? { displayName: sanitizeString(displayName) } : {}),
       createdAt: new Date(),
       updatedAt: new Date(),
     };

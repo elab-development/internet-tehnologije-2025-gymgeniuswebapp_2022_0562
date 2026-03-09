@@ -9,10 +9,12 @@ import Input from '@/components/ui/Input';
 import { TrendingUp, Calendar, Target, Plus, Trash2, Clock, Camera, Upload, X } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { apiFetch } from '@/utils/api-client';
-import WeightProgressChart from '@/components/charts/WeightProgressChart';
-import WorkoutVolumeChart from '@/components/charts/WorkoutVolumeChart';
-import CalorieIntakeChart from '@/components/charts/CalorieIntakeChart';
-import MuscleGroupPieChart from '@/components/charts/MuscleGroupPieChart';
+import dynamic from 'next/dynamic';
+
+const WeightProgressChart = dynamic(() => import('@/components/charts/WeightProgressChart'), { ssr: false });
+const WorkoutVolumeChart = dynamic(() => import('@/components/charts/WorkoutVolumeChart'), { ssr: false });
+const CalorieIntakeChart = dynamic(() => import('@/components/charts/CalorieIntakeChart'), { ssr: false });
+const MuscleGroupPieChart = dynamic(() => import('@/components/charts/MuscleGroupPieChart'), { ssr: false });
 import { GoalType, GoalStatus, PhotoCategory } from '@/types/models';
 import toast from 'react-hot-toast';
 

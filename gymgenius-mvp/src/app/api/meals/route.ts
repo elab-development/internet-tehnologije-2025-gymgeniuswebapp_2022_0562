@@ -162,8 +162,8 @@ export async function POST(request: NextRequest) {
       protein: Number(protein),
       carbs: Number(carbs),
       fat: Number(fat),
-      quantity: quantity ? Number(quantity) : undefined,
-      notes: notes || undefined,
+      ...(quantity ? { quantity: Number(quantity) } : {}),
+      ...(notes ? { notes } : {}),
       date: mealDate,
       createdAt: new Date(),
     };

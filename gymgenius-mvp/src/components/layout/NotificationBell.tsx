@@ -116,9 +116,13 @@ export default function NotificationBell() {
                           {notification.message}
                         </p>
                         <p className="text-xs text-gray-400 mt-2">
-                          {new Date(
-                            notification.createdAt.seconds * 1000
-                          ).toLocaleString()}
+                          {(() => {
+                            const d = notification.createdAt;
+                            if (!d) return '';
+                            const ts = d.seconds ?? d._seconds;
+                            const date = ts ? new Date(ts * 1000) : new Date(d);
+                            return isNaN(date.getTime()) ? '' : date.toLocaleString();
+                          })()}
                         </p>
                       </div>
 

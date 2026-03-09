@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Dumbbell, Trophy, User, LogOut, Cpu, TrendingUp, Utensils, Crown } from 'lucide-react';
+import { Home, Dumbbell, Trophy, User, LogOut, Cpu, TrendingUp, Utensils, Crown, ClipboardList } from 'lucide-react';
 import { UserRole } from '@/types/models';
 import Button from '@/components/ui/Button';
 import { useAuth } from '@/hooks/useAuth';
@@ -13,12 +13,13 @@ export default function Navbar() {
   const { user, logout, isAuthenticated } = useAuth();
 
   const navLinks = [
-    { href: '/dashboard', label: 'Dashboard', icon: Home },
-    { href: '/exercises', label: 'Exercises', icon: Dumbbell },
-    { href: '/ai-workout', label: 'AI Workout', icon: Cpu },
-    { href: '/nutrition', label: 'Nutrition', icon: Utensils },
-    { href: '/progress', label: 'Progress', icon: TrendingUp },
-    { href: '/challenges', label: 'Challenges', icon: Trophy },
+    { href: '/dashboard', label: 'Kontrolna tabla', icon: Home },
+    { href: '/exercises', label: 'Vežbe', icon: Dumbbell },
+    { href: '/workouts', label: 'Treninzi', icon: ClipboardList },
+    { href: '/ai-workout', label: 'AI Trening', icon: Cpu },
+    { href: '/nutrition', label: 'Ishrana', icon: Utensils },
+    { href: '/progress', label: 'Napredak', icon: TrendingUp },
+    { href: '/challenges', label: 'Izazovi', icon: Trophy },
   ];
 
   const isActive = (path: string) => pathname === path;

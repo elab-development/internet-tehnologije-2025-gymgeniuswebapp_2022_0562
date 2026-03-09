@@ -90,7 +90,14 @@ export async function PUT(
     await goalDoc.ref.update(updates);
 
     const updatedDoc = await goalDoc.ref.get();
-    return successResponse({ goalId: id, ...updatedDoc.data() }, 'Goal updated successfully');
+    const updatedData = updatedDoc.data() ?? {};
+    return successResponse({
+      goalId: id,
+      ...updatedData,
+      deadline: updatedData.deadline?.toDate?.()?.toISOString() ?? updatedData.deadline,
+      createdAt: updatedData.createdAt?.toDate?.()?.toISOString() ?? updatedData.createdAt,
+      updatedAt: updatedData.updatedAt?.toDate?.()?.toISOString() ?? updatedData.updatedAt,
+    }, 'Goal updated successfully');
   } catch (error) {
     console.error('Update goal error:', error);
     return errorResponse('Failed to update goal', 500);

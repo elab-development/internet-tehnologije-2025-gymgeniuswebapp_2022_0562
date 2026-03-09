@@ -87,12 +87,14 @@ export async function GET(request: NextRequest) {
       ...doc.data(),
     }));
 
-    // Fetch meals
+    // Fetch meals (date is stored as ISO string "YYYY-MM-DD" in meals collection)
+    const startDateStr = startDate.toISOString().split('T')[0];
+    const endDateStr = endDate.toISOString().split('T')[0];
     const mealsSnapshot = await adminDb
       .collection('meals')
       .where('userId', '==', userId)
-      .where('date', '>=', startDate)
-      .where('date', '<=', endDate)
+      .where('date', '>=', startDateStr)
+      .where('date', '<=', endDateStr)
       .orderBy('date', 'asc')
       .get();
 
@@ -108,7 +110,7 @@ export async function GET(request: NextRequest) {
 
     // 2. Workout Volume
     const workoutVolume = workoutLogs.map((log: any) => ({
-      date: log.date.toDate ? log.date.toDate() : new Date(log.date),
+      date: (log.date?.toDate ? log.date.toDate() : new Date(log.date)).toISOString().split('T')[0],
       volume: log.totalVolume || 0,
       duration: log.duration || 0,
     }));
@@ -129,10 +131,10 @@ export async function GET(request: NextRequest) {
         };
       }
 
-      acc[dateKey].calories += meal.totalCalories || 0;
-      acc[dateKey].protein += meal.totalProtein || 0;
-      acc[dateKey].carbs += meal.totalCarbs || 0;
-      acc[dateKey].fat += meal.totalFat || 0;
+      acc[dateKey].calories += meal.calories || 0;
+      acc[dateKey].protein += meal.protein || 0;
+      acc[dateKey].carbs += meal.carbs || 0;
+      acc[dateKey].fat += meal.fat || 0;
 
       return acc;
     }, {});

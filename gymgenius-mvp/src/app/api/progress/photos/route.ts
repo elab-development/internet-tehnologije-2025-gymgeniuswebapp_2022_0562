@@ -1,7 +1,9 @@
 import { NextRequest } from 'next/server';
-import { adminDb, adminStorage } from '@/lib/firebase-admin';
+import { adminDb } from '@/lib/firebase-admin';
 import { successResponse, errorResponse } from '@/utils/api-response';
 import { PhotoCategory } from '@/types/models';
+import path from 'path';
+import fs from 'fs';
 
 /**
  * @swagger
@@ -93,23 +95,18 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Upload to Firebase Storage
+    // Save to local filesystem (public/uploads/)
     const photoId = crypto.randomUUID();
-    const ext = file.type.split('/')[1] || 'jpg';
-    const storagePath = `progress-photos/${userId}/${photoId}.${ext}`;
+    const ext = (file.type.split('/')[1] || 'jpg').replace(/\+.*$/, '');
+    const relativeDir = `uploads/progress-photos/${userId}`;
+    const filename = `${photoId}.${ext}`;
+    const absoluteDir = path.join(process.cwd(), 'public', relativeDir);
+    const absolutePath = path.join(absoluteDir, filename);
+    const url = `/${relativeDir}/${filename}`;
+    const storagePath = `${relativeDir}/${filename}`;
 
-    const bucket = adminStorage.bucket();
-    const fileRef = bucket.file(storagePath);
-
-    await fileRef.save(buffer, {
-      contentType: file.type,
-      metadata: { firebaseStorageDownloadTokens: photoId },
-    });
-
-    // Make file publicly readable
-    await fileRef.makePublic();
-
-    const url = `https://storage.googleapis.com/${bucket.name}/${storagePath}`;
+    fs.mkdirSync(absoluteDir, { recursive: true });
+    fs.writeFileSync(absolutePath, buffer);
 
     // Save metadata to Firestore
     const photoData = {

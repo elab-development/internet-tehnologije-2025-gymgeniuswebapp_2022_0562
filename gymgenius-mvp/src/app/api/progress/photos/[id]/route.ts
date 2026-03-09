@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server';
-import { adminDb, adminStorage } from '@/lib/firebase-admin';
+import { adminDb } from '@/lib/firebase-admin';
 import { successResponse, errorResponse, notFoundResponse } from '@/utils/api-response';
+import path from 'path';
+import fs from 'fs';
 
 /**
  * @swagger
@@ -26,13 +28,13 @@ import { successResponse, errorResponse, notFoundResponse } from '@/utils/api-re
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const userId = request.headers.get('x-user-id');
     if (!userId) return errorResponse('Unauthorized', 401);
 
-    const { id: photoId } = params;
+    const { id: photoId } = await params;
     const photoRef = adminDb.collection('progressPhotos').doc(photoId);
     const photoDoc = await photoRef.get();
 
@@ -45,13 +47,14 @@ export async function DELETE(
       return errorResponse('Forbidden', 403);
     }
 
-    // Delete from Firebase Storage
+    // Delete from local filesystem
     try {
-      const bucket = adminStorage.bucket();
-      const fileRef = bucket.file(photoData.storagePath);
-      await fileRef.delete();
-    } catch (storageError) {
-      console.error('Storage delete error (non-fatal):', storageError);
+      const absolutePath = path.join(process.cwd(), 'public', photoData.storagePath);
+      if (fs.existsSync(absolutePath)) {
+        fs.unlinkSync(absolutePath);
+      }
+    } catch (fsError) {
+      console.error('Filesystem delete error (non-fatal):', fsError);
     }
 
     // Delete from Firestore

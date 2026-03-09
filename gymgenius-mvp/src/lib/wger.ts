@@ -223,11 +223,13 @@ export async function fetchExerciseImages(exerciseBaseId: number): Promise<WgerE
 
 /**
  * Search vežbi po nazivu
+ * Koristi /exerciseinfo/ endpoint koji uključuje name i description u translations nizu
  */
 export async function searchExercises(query: string, limit = 20): Promise<WgerExercise[]> {
   try {
+    // /exerciseinfo/ vraća exercises sa translations (name, description) za dati jezik
     const response = await fetch(
-      `${WGER_BASE_URL}/exercise/?language=${WGER_LANGUAGE}&limit=${limit}`,
+      `${WGER_BASE_URL}/exerciseinfo/?language=${WGER_LANGUAGE}&format=json&limit=100`,
       {
         headers: {
           Accept: 'application/json',
@@ -240,15 +242,38 @@ export async function searchExercises(query: string, limit = 20): Promise<WgerEx
     }
 
     const data = await response.json();
-    const exercises: WgerExercise[] = data.results || [];
+    const rawExercises: any[] = data.results || [];
 
-    // Client-side filtering (Wger API ne podržava search parametar)
     const searchLower = query.toLowerCase();
-    return exercises.filter(
-      (ex) =>
-        ex.name.toLowerCase().includes(searchLower) ||
-        ex.description.toLowerCase().includes(searchLower)
-    );
+
+    return rawExercises
+      .map((ex: any) => {
+        // Izvuci engleski prevod (language id 2)
+        const translation =
+          ex.translations?.find((t: any) => t.language === parseInt(WGER_LANGUAGE)) ||
+          ex.translations?.[0];
+
+        return {
+          id: ex.id,
+          uuid: ex.uuid,
+          name: translation?.name || '',
+          description: translation?.description || '',
+          creation_date: ex.creation_date,
+          category: ex.category?.id ?? ex.category,
+          muscles: ex.muscles?.map((m: any) => m.id ?? m) || [],
+          muscles_secondary: ex.muscles_secondary?.map((m: any) => m.id ?? m) || [],
+          equipment: ex.equipment?.map((e: any) => e.id ?? e) || [],
+          language: parseInt(WGER_LANGUAGE),
+          license: ex.license?.id ?? ex.license ?? 0,
+          license_author: ex.license_author || '',
+        } as WgerExercise;
+      })
+      .filter(
+        (ex) =>
+          ex.name.toLowerCase().includes(searchLower) ||
+          ex.description.toLowerCase().includes(searchLower)
+      )
+      .slice(0, limit);
   } catch (error) {
     console.error('Wger searchExercises error:', error);
     return [];

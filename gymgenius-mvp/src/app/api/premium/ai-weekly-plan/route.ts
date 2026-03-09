@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       isActive: true,
       weeklySchedule: planData.weeklySchedule || [],
       progressionNotes: planData.progressionNotes || '',
-      nutritionTips: includeNutrition ? (planData.nutritionTips || '') : undefined,
+      ...(includeNutrition ? { nutritionTips: planData.nutritionTips || '' } : {}),
       createdAt: new Date(),
       updatedAt: new Date(),
     };

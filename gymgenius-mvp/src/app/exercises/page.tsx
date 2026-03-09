@@ -304,7 +304,7 @@ export default function ExercisesPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => window.open(`https://wger.de/en/exercise/${exercise.id}`, '_blank')}
+                      onClick={() => window.open(`https://wger.de/en/exercise/${exercise.id}/view`, '_blank')}
                     >
                       View on Wger
                     </Button>

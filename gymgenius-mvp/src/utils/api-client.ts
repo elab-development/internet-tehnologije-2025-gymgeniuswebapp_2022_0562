@@ -19,13 +19,18 @@ export function getCsrfToken(): string {
  */
 export async function apiFetch(url: string, options: RequestInit = {}): Promise<Response> {
   const method = (options.method || 'GET').toUpperCase();
+  const isFormData = options.body instanceof FormData;
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
     ...(options.headers as Record<string, string>),
   };
 
   if (STATE_CHANGING_METHODS.includes(method)) {
-    const csrf = getCsrfToken();
+    let csrf = getCsrfToken();
+    if (!csrf) {
+      await fetch('/api/csrf');
+      csrf = getCsrfToken();
+    }
     if (csrf) {
       headers['x-csrf-token'] = csrf;
     }

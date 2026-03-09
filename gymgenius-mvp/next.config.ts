@@ -4,8 +4,8 @@ const nextConfig: NextConfig = {
   // Standalone output za Docker
   output: 'standalone',
 
-  // React strict mode
-  reactStrictMode: true,
+  // React strict mode disabled: react-google-charts incompatible with StrictMode double-render
+  reactStrictMode: false,
 
   // Image optimization with remotePatterns (replaces deprecated domains)
   images: {
@@ -13,10 +13,6 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'd2xdmhkmkbyw75.cloudfront.net', // Nutritionix images
-      },
-      {
-        protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com', // Firebase Storage
       },
     ],
   },
