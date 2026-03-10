@@ -18,10 +18,11 @@ Fitness aplikacija sa AI-powered personalizovanim workout planovima.
 - **Backend**: Next.js API Routes, Firebase Admin SDK
 - **Database**: Firestore
 - **Auth**: Firebase Authentication
-- **AI**: Ollama (Llama 3.2) - Local AI
+- **AI**: Ollama (Llama 3.2) - Local | Groq (Llama 3.3) - Production/Cloud
 - **Exercise DB**: Wger REST API - 1000+ exercises
 - **Testing**: Jest + React Testing Library
-- **DevOps**: Docker, Docker Compose, GitHub Actions
+- **Deployment**: Vercel (production), Docker (local)
+- **DevOps**: Docker, Docker Compose, GitHub Actions CI/CD
 
 ## 📚 API Documentation
 
@@ -67,7 +68,8 @@ FIREBASE_ADMIN_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE K
 # JWT
 JWT_SECRET=your_super_secret_jwt_key_min_32_chars
 
-# Ollama (Local AI)
+# AI Provider (Local za dev, Groq za production/Vercel)
+AI_PROVIDER=ollama
 OLLAMA_BASE_URL=http://localhost:11434
 OLLAMA_MODEL=llama3.2
 
@@ -83,6 +85,33 @@ npm run dev
 ```
 
 Otvori [http://localhost:3000](http://localhost:3000) u browser-u.
+
+---
+
+## 🌐 Vercel Deployment (Production)
+
+### ⚡ Quick Deploy (5 minuta)
+
+```bash
+npm install -g vercel
+vercel link
+vercel env pull .env.local
+vercel --prod
+```
+
+📖 **Detaljne instrukcije**: Vidi [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)
+
+**Production Features:**
+- ✅ Groq AI (besplatan, bez kreditne kartice)
+- ✅ Firestore cloud baza
+- ✅ Automatski CI/CD (GitHub Actions → Vercel)
+- ✅ SSL/HTTPS uključen
+- ✅ Custom domain ready
+
+**Setup:**
+1. Generiši tajne: `openssl rand -hex 64` (JWT_SECRET i CSRF_SECRET)
+2. Dodaj env vars u Vercel Dashboard (vidi `.env.cloud`)
+3. Deploy! 🚀
 
 ## 🤖 Ollama Setup (Local AI)
 

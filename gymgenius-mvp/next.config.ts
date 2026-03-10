@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Standalone output za Docker
-  output: 'standalone',
+  // Standalone output za Docker - Vercel koristi svoj output
+  output: process.env.VERCEL ? undefined : 'standalone',
 
   // React strict mode disabled: react-google-charts incompatible with StrictMode double-render
   reactStrictMode: false,
