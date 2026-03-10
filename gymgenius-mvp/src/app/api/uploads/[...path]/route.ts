@@ -2,6 +2,47 @@ import { NextRequest } from 'next/server';
 import path from 'path';
 import fs from 'fs';
 
+/**
+ * @swagger
+ * /api/uploads/{path}:
+ *   get:
+ *     summary: Serve uploaded files
+ *     tags: [Files]
+ *     description: Retrieves uploaded files (images) from the uploads directory. Supports path traversal protection.
+ *     parameters:
+ *       - in: path
+ *         name: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: File path relative to uploads directory (e.g., "photos/user123/image.jpg")
+ *         example: "photos/user123/progress-photo.jpg"
+ *     responses:
+ *       200:
+ *         description: File successfully retrieved
+ *         content:
+ *           image/jpeg:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *           image/png:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *           image/gif:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *           image/webp:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       403:
+ *         description: Forbidden - Path traversal attempt detected or invalid path
+ *       404:
+ *         description: File not found
+ */
+
 const MIME_TYPES: Record<string, string> = {
   jpg: 'image/jpeg',
   jpeg: 'image/jpeg',
