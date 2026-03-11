@@ -1,4 +1,4 @@
-import { initializeApp, getApps } from 'firebase/app';
+import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
@@ -12,10 +12,16 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase (samo jednom)
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+// Tokom `next build` (Docker/CI), ne inicijalizujemo Firebase jer nema env vars
+const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
-export default app;
+const app: FirebaseApp | null = isBuildPhase
+  ? null
+  : getApps().length === 0
+    ? initializeApp(firebaseConfig)
+    : getApps()[0];
+
+export const auth = app ? getAuth(app) : null!;
+export const db = app ? getFirestore(app) : null!;
+export const storage = app ? getStorage(app) : null!;
+export default app!;
