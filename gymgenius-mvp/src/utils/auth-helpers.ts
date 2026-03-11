@@ -3,8 +3,6 @@
 import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
 import app from '@/lib/firebase';
 
-const auth = getAuth(app);
-
 /**
  * Verifikuje email i password preko Firebase Auth (client SDK)
  */
@@ -12,6 +10,7 @@ export async function verifyCredentials(
   email: string,
   password: string
 ): Promise<{ success: boolean; error?: string }> {
+  const auth = getAuth(app);
   try {
     await signInWithEmailAndPassword(auth, email, password);
     return { success: true };
