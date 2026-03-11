@@ -35,6 +35,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'CORS: Unauthorized origin' }, { status: 403 });
   }
 
+  // 0. PUBLIC DOCUMENTATION ROUTES (never protected)
+  if (pathname === '/docs' || pathname.startsWith('/api/docs')) {
+    const response = NextResponse.next();
+    addSecurityHeaders(response);
+    return response;
+  }
+
   const isProtected = protectedRoutes.some((route) => pathname.startsWith(route));
   const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route));
   const isPremiumRoute = premiumRoutes.some((route) => pathname.startsWith(route));
@@ -128,8 +135,8 @@ export async function middleware(request: NextRequest) {
 function addSecurityHeaders(response: NextResponse) {
   response.headers.set('Content-Security-Policy', [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://www.google.com",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.gstatic.com",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://www.google.com https://cdn.jsdelivr.net",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.gstatic.com https://cdn.jsdelivr.net",
     "img-src 'self' data: https: blob:",
     "font-src 'self' https://fonts.gstatic.com",
     "connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://api.openai.com https://trackapi.nutritionix.com http://localhost:11434",

@@ -21,8 +21,8 @@ describe('Chart Components', () => {
 
   it('should render WorkoutVolumeChart', () => {
     const data = [
-      { date: new Date('2024-01-01'), volume: 1000, duration: 60 },
-      { date: new Date('2024-01-02'), volume: 1200, duration: 65 },
+      { date: '2024-01-01', volume: 1000, duration: 60 },
+      { date: '2024-01-02', volume: 1200, duration: 65 },
     ];
 
     render(<WorkoutVolumeChart data={data} />);

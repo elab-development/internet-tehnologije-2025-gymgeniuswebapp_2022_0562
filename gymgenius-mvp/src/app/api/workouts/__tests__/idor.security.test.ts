@@ -21,8 +21,8 @@ describe('IDOR Security Tests', () => {
   });
 
   it('should return 403 forbidden for unauthorized access', () => {
-    const userId = 'test-user-123';
-    const resourceOwnerId = 'other-user-456';
+    const userId: string = 'test-user-123';
+    const resourceOwnerId: string = 'other-user-456';
     const hasAccess = userId === resourceOwnerId;
 
     expect(hasAccess).toBe(false); // Should be forbidden
@@ -43,8 +43,8 @@ describe('IDOR Security Tests', () => {
   });
 
   it('should prevent unauthorized user ID spoofing', () => {
-    const requestUserId = 'test-user-123';
-    const maliciousUserId = 'admin-456';
+    const requestUserId: string = 'test-user-123';
+    const maliciousUserId: string = 'admin-456';
 
     expect(requestUserId === maliciousUserId).toBe(false);
   });

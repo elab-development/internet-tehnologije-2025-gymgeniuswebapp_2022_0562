@@ -18,7 +18,7 @@ export default function SwaggerDocs() {
       // Inicijalizuj Swagger UI
       if (typeof window !== 'undefined' && (window as any).SwaggerUIBundle) {
         (window as any).SwaggerUIBundle({
-          url: '/api-docs',
+          url: '/api/docs/swagger.json',
           dom_id: '#swagger-ui',
           presets: [
             (window as any).SwaggerUIBundle.presets.apis,
@@ -47,6 +47,26 @@ export default function SwaggerDocs() {
           <p className="mt-2 text-gray-600">
             Interaktivna OpenAPI 3.0 dokumentacija sa mogućnosti direktnog testiranja endpoint-a
           </p>
+        </div>
+      </div>
+
+      {/* Link to Detailed Swagger */}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 rounded-lg p-6 shadow-sm">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <h2 className="text-lg font-bold text-blue-900 mb-2">🚀 Detaljni Swagger UI</h2>
+              <p className="text-blue-800 mb-4">
+                Pristupite interaktivnoj Swagger dokumentaciji sa mogućnostima testiranja svih API endpoint-a u realnom vremenu.
+              </p>
+              <a
+                href="/api/docs"
+                className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
+              >
+                <span>Otvori Swagger UI →</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 
